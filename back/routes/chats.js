@@ -8,8 +8,8 @@ router.get('/list', verifyMiddleWare, async (req, res, next) => {
 
   if (id) {
     const chatList = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
-      WITH b AS (SELECT if(senderID = @uid, receiverID, senderID) AS index, content, sendtime FROM message WHERE senderID = @uid OR receiverID = @uid)
-      SELECT u.user_id, u.user_name, b.content, b.sendtime FROM b, users u WHERE sendtime IN (SELECT max(sendtime) FROM b GROUP BY index) and (u.user_id = b.index);`))[1];
+      WITH b AS (SELECT if(senderID = @uid, receiverID, senderID) AS id, content, sendtime FROM message WHERE senderID = @uid OR receiverID = @uid)
+      SELECT u.user_id, u.user_name, b.content, b.sendtime FROM b, users u WHERE sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
       res.json({
       success: true,
       chatList

@@ -6,14 +6,14 @@
           <h3 style="text-align: center">Online People</h3>
           <el-table :data="users" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="id" label="id" />
-            <el-table-column prop="name" label="name" />
+            <el-table-column prop="user_id" label="id" />
+            <el-table-column prop="user_name" label="name" />
             <el-table-column label="friend" align="center">
               <template #default="scope">
                 <el-button
-                  v-if="!this.friends.find(el => el.id === scope.row.id)"
+                  v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
                   size="mini"
-                  @click="addFriend(scope.row.id, scope.row.name)"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
                   type="success"
                   >
                   add

@@ -10,16 +10,16 @@
             <el-table-column prop="user_name" label="name" />
             <el-table-column label="online" align="center">
                 <template #default="scope">
-                    <span v-if="users.find(user => user.user_connected === scope.row.user_id)" class="online"> Online! </span>
+                    <span v-if="users.find(user => user.user_id === scope.row.user_id)" class="online"> Online! </span>
                     <span v-else class="offline"> Offline? </span>
                 </template>
             </el-table-column>
             <el-table-column label="friend" align="center">
               <template #default="scope">
                 <el-button
-                  v-if="!this.friends.find(friend => friend.id === scope.row.id)"
+                  v-if="!this.friends.find(friend => friend.user_id === scope.row.user_id)"
                   size="mini"
-                  @click="addFriend(scope.row.id)"
+                  @click="addFriend(scope.row.user_id)"
                   type="success"
                   >
                   add
@@ -27,7 +27,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.id)"
+                  @click="removeFriend(scope.row.user_id)"
                   type="danger"
                   >
                   remove
@@ -39,7 +39,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
                   >chat</el-button
                 >
               </template>

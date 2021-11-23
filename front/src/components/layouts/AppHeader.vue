@@ -17,7 +17,7 @@
 					<router-link to="signin" class="button"> sign in </router-link>
 				</div>
 				<div v-else>
-					<span>{{ `${id} 님`}}</span>
+					<span>{{ `${name} 님`}}</span>
 					<el-button @click="signOut()" size="small" style="margin-left: 10px;">sign out</el-button>
 				</div>
 			</el-col>

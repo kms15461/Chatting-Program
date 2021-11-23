@@ -117,7 +117,7 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
           errorMessage: 'Not exists id!'
         });
       } else {
-        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.used_id = '${friend_id}');`);
+        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
 
         res.json({
           success: true,

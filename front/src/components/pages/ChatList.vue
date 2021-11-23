@@ -11,12 +11,12 @@
             cell-class-name="nowrap"
           >
             <el-table-column type="index" width="50" />
-            <el-table-column prop="id" label="id" width="100" />
-            <el-table-column prop="name" label="name" width="100" />
+            <el-table-column prop="user_id" label="id" width="100" />
+            <el-table-column prop="user_name" label="name" width="100" />
             <el-table-column label="message">
               <template #default="scope">
 								<span style="white-space: nowrap;">
-									{{ scope.row.message }}
+									{{ scope.row.content }}
 								</span>
 							</template>
             </el-table-column>
@@ -49,7 +49,7 @@ export default {
     const { success, errorMessage, chatList } = (await http.get("/chats/list")).data;
 
     this.sockets.subscribe("CHAT_MESSAGE", (msg) => {
-      const { message, from_id, from_name, created_at } = msg;
+      const { from_id, from_name, message, created_at } = msg;
 
       const target = this.chatList.find((chat) => chat.id === from_id);
 

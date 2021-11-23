@@ -6,12 +6,12 @@
           <h3 style="text-align: center">Friend</h3>
           <el-table :data="friends" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="id" label="id" />
-            <el-table-column prop="name" label="name" />
+            <el-table-column prop="user_id" label="id" />
+            <el-table-column prop="user_name" label="name" />
             <el-table-column label="online" align="center">
                 <template #default="scope">
-                    <span v-if="users.find(user => user.id === scope.row.id)" class="online"> Online </span>
-                    <span v-else class="offline"> Offline </span>
+                    <span v-if="users.find(user => user.user_connected === scope.row.user_id)" class="online"> Online! </span>
+                    <span v-else class="offline"> Offline? </span>
                 </template>
             </el-table-column>
             <el-table-column label="friend" align="center">
@@ -52,6 +52,7 @@
 </template>
 
 <script>
+console.log("enter friend.vue");
 import { mapState, mapMutations } from "vuex";
 import { ElNotification } from 'element-plus';
 import http from '../../services/http';

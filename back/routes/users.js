@@ -101,21 +101,23 @@ router.post('/addFriends', verifyMiddleWare, async (req, res, next) => {
 });
 
 router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
+  console.log('enter remove Friend!');
   const { id } = req.decoded;
+  console.log(id);
   const { friend_id } = req.body;
-
+  console.log(friend_id);
   if (id) {
     if (friend_id) {
       const friends_array = await query(`SELECT * FROM friends WHERE (follower, 
         followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
-
+      console.log(friends_array);
       if (friends_array.length === 0) {
         res.json({
           success: false,
           errorMessage: 'Not exists id!'
         });
       } else {
-        await query(`DELETE FROM friends where (from_id, to_id) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.id = '${id}' and u2.id = '${friend_id}');`);
+        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.used_id = '${friend_id}');`);
 
         res.json({
           success: true,

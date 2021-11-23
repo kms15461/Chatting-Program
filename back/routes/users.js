@@ -32,9 +32,7 @@ router.post('/signIn', async (req, res, next) => {
 
 router.get('/whoAmI', verifyMiddleWare, (req, res, next) => {
   const { id, name } = req.decoded;
-  console.log('WhoamI');
 
-  
   if (id) {
     res.json({
       success: true,
@@ -73,8 +71,8 @@ router.post('/addFriends', verifyMiddleWare, async (req, res, next) => {
 
   if (id) {
     if (friend_id) {
-      const friends_array = await query(`SELECT * FROM friends WHERE (from_id, 
-        to_id) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.id = '${id}' and u2.id = '${friend_id}');`);
+      const friends_array = await query(`SELECT * FROM friends WHERE (follower, 
+        followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
 
       if (friends_array.length > 0) {
         res.json({
@@ -108,8 +106,8 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
 
   if (id) {
     if (friend_id) {
-      const friends_array = await query(`SELECT * FROM friends WHERE (from_id, 
-        to_id) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.id = '${id}' and u2.id = '${friend_id}');`);
+      const friends_array = await query(`SELECT * FROM friends WHERE (follower, 
+        followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
 
       if (friends_array.length === 0) {
         res.json({
@@ -170,15 +168,14 @@ router.post('/signUp', async (req, res, next) => {
     });
   } else { // 통과 O
     // 중복 확인
-    const queryResult = await query(`SELECT * from users where id = '${id}'`);
-
+    const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
     if (queryResult.length > 0) {
       res.json({
         success: false,
         errorMessage: 'Duplicate id'
       });
     } else {
-      await query(`INSERT INTO users(id, password, name) VALUES('${id}', '${password}', '${name}')`);
+      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, 1)`);
 
       res.json({
         success: true

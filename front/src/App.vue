@@ -30,11 +30,14 @@ export default {
     ...mapMutations("user", ["updateUser"]),
   },
   computed: {
-    ...mapState('user', ['id'])
+    ...mapState('user', ['id','name'])
   },
   async created() {
     const { success, id, name } = (await http.get("/users/whoAmI")).data;
-
+    console.log("in APP.vue");
+    console.log(id);
+    console.log(name);
+    
     this.sockets.subscribe("UPDATE_ONLINE_USERS", (data) => {
       this.updateOnlineUsers({
         users: data.filter((people) => people.id !== this.id),
@@ -42,6 +45,7 @@ export default {
     });
 
     if (success) {
+      
       this.updateUser({
         id,
         name,

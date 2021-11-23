@@ -6,7 +6,7 @@ const { sign, verifyMiddleWare } = require('../modules/jwt');
 router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;
-  const queryResult = await query(`SELECT * from users where id = '${id}' and password = '${password}';`);
+  const queryResult = await query(`SELECT * from users where user_id = '${id}' and user_pw = '${password}';`);
 
   if (queryResult.length > 0) {
     const jwt = sign({

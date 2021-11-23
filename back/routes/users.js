@@ -3,6 +3,7 @@ const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
 
+
 router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;
@@ -52,7 +53,7 @@ router.get('/friends', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
   console.log('enter friends');
   if (id) {
-    const friends = (await query(`SELECT id, name FROM users where user_id in (SELECT to_id FROM friends WHERE from_id in (SELECT user_id FROM users WHERE id = '${id}'))`));
+    const friends = (await query(`SELECT user_id, user_name FROM users where user_id in (SELECT followee FROM friends WHERE follower in (SELECT user_id FROM users WHERE user_id = '${id}'))`));
 
     res.json({
       success: true,

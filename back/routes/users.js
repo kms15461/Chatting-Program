@@ -79,7 +79,7 @@ router.post('/addFriends', verifyMiddleWare, async (req, res, next) => {
         res.json({
           success: false,
           errorMessage: 'already exists!'
-        });
+        }); 
       } else {
         await query(`INSERT INTO friends(from_id, to_id) (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.id = '${id}' and u2.id = '${friend_id}');`);
 

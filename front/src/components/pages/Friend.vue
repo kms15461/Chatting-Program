@@ -8,9 +8,10 @@
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
-            <el-table-column label="online" align="center">
+            <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
-                    <span v-if="1 === scope.row.use_connected)" class="online"> Online! </span>
+                    <span>???{{scope.row}}???</span>
+                    <span v-if="scope.row.user_connected === 1" class="online"> Online! </span>
                     <span v-else class="offline"> Offline? </span>
                 </template>
             </el-table-column>

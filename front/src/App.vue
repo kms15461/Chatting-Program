@@ -50,7 +50,7 @@ export default {
       this.updateUser({
         id,
         name,
-        connected;
+        connected
       });
 
       this.$socket.connect();

@@ -33,7 +33,7 @@ import http from "../../services/http";
 export default {
   name: "AppHeader",
 	computed: {
-		...mapState('user', ['name', 'id']),
+		...mapState('user', ['name', 'id', 'connected']),
 	},
   data() {
     return {
@@ -49,7 +49,8 @@ export default {
 
 				this.updateUser({
 					id: '',
-					name: ''
+					name: '',
+          connected: 1
 				});
 				
 				this.$router.push({

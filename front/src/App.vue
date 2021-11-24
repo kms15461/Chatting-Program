@@ -30,13 +30,14 @@ export default {
     ...mapMutations("user", ["updateUser"]),
   },
   computed: {
-    ...mapState('user', ['id','name'])
+    ...mapState('user', ['id','name','connected'])
   },
   async created() {
-    const { success, id, name } = (await http.get("/users/whoAmI")).data;
+    const { success, id, name , connected} = (await http.get("/users/whoAmI")).data;
     console.log("in APP.vue");
     console.log(id);
     console.log(name);
+    console.log(connected);
     
     this.sockets.subscribe("UPDATE_ONLINE_USERS", (data) => {
       this.updateOnlineUsers({
@@ -49,6 +50,7 @@ export default {
       this.updateUser({
         id,
         name,
+        connected;
       });
 
       this.$socket.connect();

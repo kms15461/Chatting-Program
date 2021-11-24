@@ -10,12 +10,24 @@
           <el-form ref="ruleForm" :model="ruleForm" label-width="100px" :rules="rules">
             <el-form-item label="ID" prop="id">
               <el-input v-model="ruleForm.id"></el-input>
+              <el-button type="primary" @click="idDuplicateCheck()" >중복확인</el-button>
             </el-form-item>
             <el-form-item label="PASSWORD" prop="password">
               <el-input v-model="ruleForm.password"></el-input>
             </el-form-item>
+            <el-form-item label="PASSWORD CHECK" prop="password_check">
+              <el-input v-model="ruleForm.password_check"></el-input>
+            </el-form-item>
             <el-form-item label="NAME" prop="name">
               <el-input v-model="ruleForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="USER TYPE" prop="user_type">
+              <el-select v-model="ruleForm.user_type">
+                <el-option label="일반" value="general"></el-option>
+                <el-option label="학생" value="student"></el-option>
+                <el-option label="강사" value="teacher"></el-option>
+                <el-option label="기업" value="company"></el-option>
+              </el-select>
             </el-form-item>
             <el-row>
               <el-col :span="16"> </el-col>
@@ -75,7 +87,9 @@ export default {
       ruleForm: {
         id: "",
         password: "",
+        password_check: "",
         name: "",
+        user_type: ""
       },
       rules: {
         id: [{ validator: idValidator, trigger: "blur" }],
@@ -113,6 +127,9 @@ export default {
         }
       });
     },
+    idDuplicateCheck(){
+
+    }
   },
 };
 </script>

@@ -189,4 +189,20 @@ router.post('/signUp', async (req, res, next) => {
   }
 });
 
+router.post('/idDuplicateCheck', async (req, res, next) => {
+  const { id, password, name } = req.body;
+  const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
+  if (queryResult.length > 0) {
+    res.json({
+      success: false,
+      errorMessage: 'Duplicate id'
+    });
+  } 
+  else {
+    res.json({
+      success: true
+    });
+  }
+});
+
 module.exports = router;

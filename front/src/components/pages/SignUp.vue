@@ -71,6 +71,14 @@ export default {
       }
     };
 
+    const passwordCheck = (rule, value, callback) => {
+      if (value === this.ruleForm.password) {
+        callback();
+      } else {
+        callback(new Error("비밀번호가 일치하지 않습니다"));
+      }
+    };
+
     const nameValidator = (rule, value, callback) => {
       const regex = /^[가-힣a-zA-z]{3,20}$/; // 3~20자 사이의 한글 또는 영문
 
@@ -94,6 +102,7 @@ export default {
       rules: {
         id: [{ validator: idValidator, trigger: "blur" }],
         password: [{ validator: passwordValidator, trigger: "blur" }],
+        password_check: [{ validator: passwordCheck, trigger: "blur" }],
         name: [{ validator: nameValidator, trigger: "blur" }],
       },
     };
@@ -127,8 +136,30 @@ export default {
         }
       });
     },
-    idDuplicateCheck(){
+    idDuplicateCheck() {
+      this.$refs["ruleForm"].validate(async (valid) => {
+        if (valid) {
+          const { success, errorMessage } = (
+            await http.post("/users/idDuplicateCheck", this.ruleForm)
+          ).data;
 
+          if (success) {
+            ElNotification({
+              title: "중복체크",
+              message: "중복된 아이디가 없습니다",
+              type: "success",
+            });
+          } else {
+            ElNotification({
+              title: "중복체크",
+              message: errorMessage,
+              type: "error",
+            });
+          }
+        } else {
+          return false;
+        }
+      });
     }
   },
 };
@@ -144,6 +175,9 @@ export default {
   height: 100%;
 }
 .el-input {
+  width: 90%;
+}
+.el-select {
   width: 90%;
 }
 .el-row {

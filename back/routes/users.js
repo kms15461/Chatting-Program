@@ -190,12 +190,10 @@ router.post('/signUp', async (req, res, next) => {
     }
   }
 });
-<<<<<<< HEAD
 router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
   const queryResult = await query(`SELECT * from users where user_connected = 1`);
   res.json({queryResult})
 });
-=======
 
 router.post('/idDuplicateCheck', async (req, res, next) => {
   const { id, password, name } = req.body;
@@ -213,5 +211,4 @@ router.post('/idDuplicateCheck', async (req, res, next) => {
   }
 });
 
->>>>>>> af6f08c64b23aa1ee9b3613b4b79bf0541dd13e0
 module.exports = router;

@@ -35,7 +35,6 @@ router.post('/signIn', async (req, res, next) => {
 router.get('/whoAmI', verifyMiddleWare, async (req, res, next) => {
   console.log(req.decoded);
   const { id, name , connected} = req.decoded;
-  const tuple=await query(`SELECT user_name, user_connected FROM users WHERE  user_id = '${id}';`);
 
   if (id) {
     res.json({
@@ -56,8 +55,7 @@ router.get('/friends', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
   console.log('enter friends');
   if (id) {
-    const friends = (await query(`SELECT user_id, user_name FROM users where user_id in (SELECT followee FROM friends WHERE follower in (SELECT user_id FROM users WHERE user_id = '${id}'))`));
-
+    const friends = (await query(`SELECT user_id, user_name, user_connected FROM users where user_id in (SELECT followee FROM friends WHERE follower in (SELECT user_id FROM users WHERE user_id = '${id}'))`));
     res.json({
       success: true,
       friends

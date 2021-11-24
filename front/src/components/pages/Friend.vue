@@ -8,9 +8,9 @@
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
-            <el-table-column label="online" align="center">
+            <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
-                    <span v-if="users.find(user => user.user_id === scope.row.user_id)" class="online"> Online! </span>
+                    <span v-if="scope.row.user_connected === 1" class="online"> Online! </span>
                     <span v-else class="offline"> Offline? </span>
                 </template>
             </el-table-column>
@@ -77,7 +77,7 @@ export default {
           type: "success",
         });
         this.updateFriends({
-          friends: this.friends.filter(friend => friend.id !== friend_id)
+          friends: this.friends.filter(friend => friend.user_id !== friend_id)
         });
       } else {
         ElNotification({

@@ -19,7 +19,8 @@
 				<div v-else>
 					<span>{{ `${name} 님`}}</span>
 					<el-button @click="signOut()" size="small" style="margin-left: 10px;">sign out</el-button>
-				</div>
+          <br><router-link to="Profile" class="button"> Profile </router-link>
+        </div>
 			</el-col>
     </el-row>
   </div>
@@ -33,7 +34,7 @@ import http from "../../services/http";
 export default {
   name: "AppHeader",
 	computed: {
-		...mapState('user', ['name', 'id']),
+		...mapState('user', ['name', 'id', 'connected']),
 	},
   data() {
     return {
@@ -49,7 +50,8 @@ export default {
 
 				this.updateUser({
 					id: '',
-					name: ''
+					name: '',
+          connected: 0
 				});
 				
 				this.$router.push({

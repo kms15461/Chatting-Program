@@ -183,7 +183,9 @@ router.post('/signUp', async (req, res, next) => {
       await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, 1)`);
 
       res.json({
-        success: true
+        success: true,
+        name: name,
+        connected:1
       });
     }
   }

@@ -102,10 +102,11 @@ export default {
     signUp() {
       this.$refs["ruleForm"].validate(async (valid) => {
         if (valid) {
-          const { success, errorMessage } = (
+          const { success, name, connected, errorMessage } = (
             await http.post("/users/signUp", this.ruleForm)
           ).data;
-
+          console.log(name);
+          console.log(connected);
           if (success) {
             this.$router.push({
               name: "SignIn",

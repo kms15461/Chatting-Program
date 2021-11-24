@@ -211,7 +211,8 @@ router.post('/signUp', async (req, res, next) => {
   }
 });
 router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
-  const queryResult = await query(`SELECT * from users where user_connected = 1`);
+  const { id } = req.decoded;
+  const queryResult = await query(`SELECT * from users where user_connected = 1 and user_id <> '${id}'`);
   res.json({queryResult})
 });
 

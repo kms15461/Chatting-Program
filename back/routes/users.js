@@ -8,11 +8,12 @@ router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;
   const queryResult = await query(`SELECT * from users where user_id = '${id}' and user_pw = '${password}';`);
-
+  console.log(queryResult);
   if (queryResult.length > 0) {
     const jwt = sign({
       id,
-      name: queryResult[0].name
+      name: queryResult[0].user_name,
+      connected: queryResult[0].user_connected
     });
     res.cookie('token', jwt, {
       httpOnly: true,
@@ -20,7 +21,8 @@ router.post('/signIn', async (req, res, next) => {
     }).json({
       success: true,
       id,
-      name: queryResult[0].name
+      name: queryResult[0].user_name,
+      connected: queryResult[0].user_connected
     });
   } else {
     res.json({
@@ -32,17 +34,15 @@ router.post('/signIn', async (req, res, next) => {
 
 router.get('/whoAmI', verifyMiddleWare, async (req, res, next) => {
   console.log(req.decoded);
-  const { id,  } = req.decoded;
+  const { id, name , connected} = req.decoded;
   const tuple=await query(`SELECT user_name, user_connected FROM users WHERE  user_id = '${id}';`);
-  const name=tuple[0].user_name;
-  const connected=tuple[0].user_connected;
 
   if (id) {
     res.json({
       success: true,
       id,
       name,
-      connected,
+      connected
     });
   } else {
     res.json({

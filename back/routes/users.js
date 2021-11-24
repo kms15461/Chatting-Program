@@ -156,7 +156,7 @@ router.get('/signOut', verifyMiddleWare, (req, res, next) => {
 });
 
 router.post('/signUp', async (req, res, next) => {
-  const { id, password, name } = req.body;
+  const { id, password, name, user_type} = req.body;
   const id_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,20}$/; // 4~20자리의 문자 및 숫자 1개 이상씩 사용한 정규식
   const name_regex = /^[가-힣a-zA-z]{3,20}$/;
 
@@ -180,7 +180,20 @@ router.post('/signUp', async (req, res, next) => {
         errorMessage: 'Duplicate id'
       });
     } else {
-      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, 1)`);
+      usertypenum = 0;
+      if (user_type === "general") {
+        usertypenum = 1;
+      }
+      else if (user_type === "student") {
+        usertypenum = 2;
+      }
+      else if (user_type === "teacher") {
+        usertypenum = 3;
+      }
+      else if (user_type === "company") {
+        usertypenum = 4;
+      }
+      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${user_type}', 1, '${usertypenum}')`);
 
       res.json({
         success: true,
@@ -196,7 +209,7 @@ router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
 });
 
 router.post('/idDuplicateCheck', async (req, res, next) => {
-  const { id, password, name } = req.body;
+  const { id, password, name, usertype } = req.body;
   const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
   if (queryResult.length > 0) {
     res.json({

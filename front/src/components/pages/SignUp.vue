@@ -23,10 +23,10 @@
             </el-form-item>
             <el-form-item label="USER TYPE" prop="user_type">
               <el-select v-model="ruleForm.user_type">
-                <el-option label="일반" value="general"></el-option>
-                <el-option label="학생" value="student"></el-option>
-                <el-option label="강사" value="teacher"></el-option>
-                <el-option label="기업" value="company"></el-option>
+                <el-option label="일반" value="general" v-model="ruleForm.user_type">일반</el-option>
+                <el-option label="학생" value="student" v-model="ruleForm.user_type">학생</el-option>
+                <el-option label="강사" value="teacher" v-model="ruleForm.user_type">강사</el-option>
+                <el-option label="기업" value="company" v-model="ruleForm.user_type">기업</el-option>
               </el-select>
             </el-form-item>
             <el-row>
@@ -97,6 +97,7 @@ export default {
         password: [{ validator: passwordValidator, trigger: "blur" }],
         password_check: [{ validator: passwordCheck, trigger: "blur" }],
         name: [{ validator: nameValidator, trigger: "blur" }],
+        user_type: [],
       },
     };
   },

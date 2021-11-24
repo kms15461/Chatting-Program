@@ -10,7 +10,6 @@
             <el-table-column prop="user_name" label="name" />
             <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
-                    <span>???{{scope.row}}???</span>
                     <span v-if="scope.row.user_connected === 1" class="online"> Online! </span>
                     <span v-else class="offline"> Offline? </span>
                 </template>

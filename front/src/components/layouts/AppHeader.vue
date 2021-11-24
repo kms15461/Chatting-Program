@@ -50,7 +50,7 @@ export default {
 				this.updateUser({
 					id: '',
 					name: '',
-          connected: 1
+          connected: 0
 				});
 				
 				this.$router.push({

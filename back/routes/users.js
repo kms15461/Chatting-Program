@@ -190,8 +190,28 @@ router.post('/signUp', async (req, res, next) => {
     }
   }
 });
+<<<<<<< HEAD
 router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
   const queryResult = await query(`SELECT * from users where user_connected = 1`);
   res.json({queryResult})
 });
+=======
+
+router.post('/idDuplicateCheck', async (req, res, next) => {
+  const { id, password, name } = req.body;
+  const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
+  if (queryResult.length > 0) {
+    res.json({
+      success: false,
+      errorMessage: 'Duplicate id'
+    });
+  } 
+  else {
+    res.json({
+      success: true
+    });
+  }
+});
+
+>>>>>>> af6f08c64b23aa1ee9b3613b4b79bf0541dd13e0
 module.exports = router;

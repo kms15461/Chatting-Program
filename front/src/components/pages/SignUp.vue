@@ -67,6 +67,10 @@ export default {
         callback();
       }
     };
+<<<<<<< HEAD
+=======
+
+>>>>>>> af6f08c64b23aa1ee9b3613b4b79bf0541dd13e0
     const passwordCheck = (rule, value, callback) => {
       if (value === this.ruleForm.password) {
         callback();
@@ -74,6 +78,10 @@ export default {
         callback(new Error("비밀번호가 일치하지 않습니다"));
       }
     };
+<<<<<<< HEAD
+=======
+
+>>>>>>> af6f08c64b23aa1ee9b3613b4b79bf0541dd13e0
     const nameValidator = (rule, value, callback) => {
       const regex = /^[가-힣a-zA-z]{3,20}$/; // 3~20자 사이의 한글 또는 영문
       if (value === "") {

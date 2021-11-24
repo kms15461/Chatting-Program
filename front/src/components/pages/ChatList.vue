@@ -42,17 +42,13 @@
 <script>
 import { ElNotification } from "element-plus";
 import http from "../../services/http";
-
 export default {
   name: "ChatList",
   async created() {
     const { success, errorMessage, chatList } = (await http.get("/chats/list")).data;
-
     this.sockets.subscribe("CHAT_MESSAGE", (msg) => {
       const { from_id, from_name, message, created_at } = msg;
-
       const target = this.chatList.find((chat) => chat.user_id === from_id);
-
       if (target) {
         target.message = message;
         target.created_at = created_at;
@@ -64,10 +60,8 @@ export default {
           created_at,
         });
       }
-
       this.chatList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     });
-
     if (success) {
       this.chatList = chatList.sort(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)

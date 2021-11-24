@@ -4,7 +4,7 @@
       <el-col :span="6" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">
           <h3 style="text-align: center">Online People</h3>
-          <el-table :data="users" style="width: 100%" max-Height="700px">
+          <el-table :data="queryResult" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
@@ -52,6 +52,17 @@ import http from '../../services/http';
 
 export default {
   name: "Chat",
+  async created() {
+    console.log("ENTER ONLINE VUE");
+    const { queryResult } = (await http.get('/users/onlineuser')).data;
+    console.log(queryResult);
+    console.log("-----------------------------------------");
+    queryResult.forEach(QR => {
+      this.queryResult.push({
+        ...QR
+      });
+    });
+  },
   computed: {
     ...mapState('user', ['id', 'friends']),
     ...mapState('online', ['users']),
@@ -103,21 +114,11 @@ export default {
       }
     },
   },
-  async created() {
-    const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
-
-    if (success) {
-      this.updateFriends({
-        friends
-      });
-    } else {
-      ElNotification({
-        title: "Add friend",
-        message: errorMessage,
-        type: "error",
-      });
-    }
-  }
+  data() {
+    return {
+      queryResult: [],
+    };
+  }, 
 };
 </script>
 

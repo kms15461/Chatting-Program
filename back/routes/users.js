@@ -190,5 +190,8 @@ router.post('/signUp', async (req, res, next) => {
     }
   }
 });
-
+router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
+  const queryResult = await query(`SELECT * from users where user_connected = 1`);
+  res.json({queryResult})
+});
 module.exports = router;

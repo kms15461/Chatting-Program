@@ -4,7 +4,7 @@
       <el-col :span="8" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">
           <h3 style="text-align: center">Online Friend</h3>
-          <el-table :data="friends" style="width: 100%" max-Height="700px">
+          <el-table :data="on_friend" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
@@ -46,7 +46,7 @@
             </el-table-column>
           </el-table>
           <h3 style="text-align: center">Offline Friend</h3>
-          <el-table :data="friends" style="width: 100%" max-Height="700px">
+          <el-table :data="off_friend" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
@@ -131,8 +131,23 @@ export default {
     },
   },
   async created() {
+    const { on_friend } = (await http.get('/users/onlinefriend')).data;
+    console.log(on_friend);
+    console.log("-------------on----------------------------");
+    on_friend.forEach(on => {
+      this.on_friend.push({
+        ...on
+      });
+    });
+    const { off_friend } = (await http.get('/users/offlinefriend')).data;
+    console.log(off_friend);
+    console.log("--------------off---------------------------");
+    off_friend.forEach(off => {
+      this.off_friend.push({
+        ...off
+      });
+    });
     const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
-
     if (success) {
       this.updateFriends({
         friends
@@ -144,7 +159,13 @@ export default {
         type: "error",
       });
     }
-  }
+  },
+  data() {
+    return {
+      on_friend: [],
+      off_friend: [],
+    };
+  }, 
 };
 </script>
 

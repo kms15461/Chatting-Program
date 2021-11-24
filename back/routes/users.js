@@ -3,7 +3,14 @@ const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
 
-
+router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
+  const on_friend = await query(`SELECT * from users,friends where user_connected = 1 and user_id=followee;`);
+  res.json({on_friend})
+});
+router.get('/offlinefriend', verifyMiddleWare, async(req, res, next) => {
+  const off_friend = await query(`SELECT * from users,friends where user_connected = 0 and user_id=followee;`);
+  res.json({off_friend})
+});
 router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;
@@ -207,6 +214,7 @@ router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
   const queryResult = await query(`SELECT * from users where user_connected = 1`);
   res.json({queryResult})
 });
+
 
 router.post('/idDuplicateCheck', async (req, res, next) => {
   const { id, password, name, usertype } = req.body;

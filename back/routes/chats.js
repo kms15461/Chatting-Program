@@ -8,7 +8,7 @@ router.get('/list', verifyMiddleWare, async (req, res, next) => {
 
   if (id) {
     const chatList = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
-      WITH b AS (SELECT if(senderID = @uid, receiverID, senderID) AS id, content, sendtime FROM message WHERE senderID = @uid OR receiverID = @uid)
+      WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
       SELECT u.user_id, u.user_name, b.content, b.sendtime FROM b, users u WHERE sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
       res.json({
       success: true,
@@ -29,7 +29,7 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
   if (id) {
     const chatDatas = await query(`SELECT content as message, a.f_i as from_id, a.t_i as to_id, sendtime as created_at
       FROM message, (SELECT f.user_id as f_i, t.user_id as t_i FROM users f, users t WHERE (f.user_id = '${id}' and t.user_id = '${targetId}') OR (t.user_id = '${id}' and f.user_id = '${targetId}')) a 
-      WHERE (senderID = a.f_i and receiverID = a.t_i) ORDER BY sendtime ASC;`);
+      WHERE (senderid = a.f_i and receiverid = a.t_i) ORDER BY sendtime ASC;`);
     res.json({
       success: true,
       chatDatas

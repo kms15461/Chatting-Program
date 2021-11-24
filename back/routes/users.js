@@ -30,14 +30,19 @@ router.post('/signIn', async (req, res, next) => {
   }
 });
 
-router.get('/whoAmI', verifyMiddleWare, (req, res, next) => {
-  const { id, name } = req.decoded;
+router.get('/whoAmI', verifyMiddleWare, async (req, res, next) => {
+  console.log(req.decoded);
+  const { id,  } = req.decoded;
+  const tuple=await query(`SELECT user_name, user_connected FROM users WHERE  user_id = '${id}';`);
+  const name=tuple[0].user_name;
+  const connected=tuple[0].user_connected;
 
   if (id) {
     res.json({
       success: true,
       id,
       name,
+      connected,
     });
   } else {
     res.json({
@@ -117,7 +122,7 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
           errorMessage: 'Not exists id!'
         });
       } else {
-        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
+        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.used_id = '${friend_id}');`);
 
         res.json({
           success: true,

@@ -26,7 +26,7 @@
                   size="mini"
                   type="primary"
                   @click="
-                    $router.push({ name: 'Chat', params: { userId: scope.row.id } })
+                    $router.push({ name: 'Chat', params: { userId: scope.row.user_id } })
                   "
                   >chat</el-button
                 >
@@ -51,7 +51,7 @@ export default {
     this.sockets.subscribe("CHAT_MESSAGE", (msg) => {
       const { from_id, from_name, message, created_at } = msg;
 
-      const target = this.chatList.find((chat) => chat.id === from_id);
+      const target = this.chatList.find((chat) => chat.user_id === from_id);
 
       if (target) {
         target.message = message;

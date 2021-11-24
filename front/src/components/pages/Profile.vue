@@ -33,17 +33,17 @@
 </template>
 
 <script>
-/*import http from '../../services/http';
+//import http from '../../services/http';
 import { mapState } from "vuex";
-import { mapMutations } from "vuex";
-import { ElNotification } from 'element-plus';*/
+//import { mapMutations } from "vuex";
+//import { ElNotification } from 'element-plus';
 console.log("friend.vue 하나 만드는 것도 좆같이 어렵네 진짜");
 
 export default {
   name: "Profile",
-	// computed: {
-	// 	...mapState('user', ['name', 'id']),
-	// },
+	 computed: {
+	 	...mapState('user', ['name', 'id', 'connected']),
+	 },
   data() {
     const statusValidator = (rule, value, callback) => {
       const regex = /^[가-힣 ]{,20}$/; // 20자 이하의 한글 또는 공백

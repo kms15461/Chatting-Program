@@ -193,7 +193,7 @@ router.post('/signUp', async (req, res, next) => {
       else if (user_type === "company") {
         usertypenum = 4;
       }
-      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${user_type}', 1, '${usertypenum}')`);
+      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, '${usertypenum}')`);
 
       res.json({
         success: true,

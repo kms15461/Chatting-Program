@@ -41,31 +41,14 @@
               <el-button type="info" class="send_button" @click="dialogVisible = true">rendezvous send</el-button>
               <el-dialog v-model="dialogVisible" width="30%">
                 <el-row justify="center" align="middle" style="height: 50%;">
-                  <el-col
-                    :span="5">
-                    <el-button type="info" class="send_button" @click="sendMessage">3분</el-button>
-                  </el-col>
-                  <el-col
-                    :span="1">
-                  </el-col>
-                  <el-col
-                    :span="5">
-                    <el-button type="info" class="send_button" @click="sendMessage">30분</el-button>
-                  </el-col>
-                  <el-col
-                    :span="1">
-                  </el-col>
-                  <el-col
-                    :span="5">
-                    <el-button type="info" class="send_button" @click="sendMessage">60분</el-button>
-                  </el-col>
-                  <el-col
-                    :span="1">
-                  </el-col>
-                  <el-col
-                    :span="5">
-                    <el-button type="info" class="send_button" @click="sendMessage">지정시간</el-button>
-                  </el-col>
+                  <div>
+                    <el-radio-group v-model="radio">
+                      <el-radio-button label="3분"></el-radio-button>
+                      <el-radio-button label="30분"></el-radio-button>
+                      <el-radio-button label="60분"></el-radio-button>
+                      <el-radio-button label="지정시간"></el-radio-button>
+                    </el-radio-group>
+                  </div>
                 </el-row>
                 <el-row justify="center" align="middle" style="height: 50%;">
                   <el-col
@@ -136,6 +119,7 @@ export default defineComponent({
 
     return {
       dialogVisible,
+      radio: ref('3분만'),
     }
   },
   methods: {
@@ -217,4 +201,5 @@ p {
   width: 100%;
   margin: 5px 0 5px 0;
 }
+
 </style>

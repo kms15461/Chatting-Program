@@ -34,10 +34,7 @@ export default {
   },
   async created() {
     const { success, id, name , connected} = (await http.get("/users/whoAmI")).data;
-    console.log("in APP.vue");
-    console.log(id);
-    console.log(name);
-    console.log(connected);
+
     
     this.sockets.subscribe("UPDATE_ONLINE_USERS", (data) => {
       this.updateOnlineUsers({

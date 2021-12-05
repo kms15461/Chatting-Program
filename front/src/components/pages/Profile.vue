@@ -9,22 +9,23 @@
           <br />
           <el-form ref="form" :model="form" label-width="120px" :rules="rules">
             <el-form-item label="상태메시지">
-              <el-input v-model="form.status"></el-input>
+              <el-input v-model="form.statusmsg"></el-input>
             </el-form-item>
-
+          </el-form>
             <el-row>
               <el-col :span="6">
                 <el-button type="primary" @click="EditStatusMsg()">변경하기</el-button>
               </el-col>
             </el-row>
-            <el-form-item label="현재위치" prop="user_location">
-              <el-select v-model="form.location">
-                <el-option label="공학관" value=0></el-option>
-                <el-option label="백양관" value=1></el-option>
-                <el-option label="학생회관" value=2></el-option>
-                <el-option label="신촌역" value=3></el-option>
-              </el-select>
-            </el-form-item>
+            <el-row :data="userinfo" v-if="userinfo.queryResult">//쿼리가 끝나서 결과물이 돌아왔을때 렌더링
+            <el-col>위도:{{ `${userinfo.queryResult[0].lat} `}} </el-col>
+            <el-col>경도:{{ `${userinfo.queryResult[0].lon} `}} </el-col>
+            <el-col>건물:{{ `${userinfo.queryResult[0].building} `}} </el-col>
+            <el-col>층수:{{ `${userinfo.queryResult[0].floor} `}} </el-col>
+            <el-col>SSID:{{ `${userinfo.queryResult[0].SSID} `}} </el-col>
+            <el-col>IP:{{ `${userinfo.queryResult[0].IP} `}} </el-col>
+              
+            </el-row>
             <el-row>
               <el-col :span="6">
                 <el-button type="primary" @click="UpdatemyPlace()">업데이트 하기</el-button>
@@ -38,7 +39,7 @@
               회원탈퇴
               <el-button type="primary" @click="Withdrawal()">확인</el-button>
             </el-row>
-          </el-form>
+          
         </el-card>
       </el-col>
     </el-row>
@@ -53,15 +54,24 @@ import { ElNotification } from 'element-plus';
 
 export default {
   name: "EditStatusMsg",
+
   computed: {
     ...mapState('user', ['name', 'id', 'connected']),
   },
   data() {
     return {
+      userinfo:[],
       form: {
-        status: "",
+        statusmsg: "",
       },
     };
+  },
+  async created() {
+    console.log("enter created");
+    const queryResult=(await http.get('/users/SetProfile')).data;
+
+    console.log(queryResult);
+    this.userinfo=queryResult;
   },
   methods: {
     ...mapMutations("user", ["updateUser"]),
@@ -137,9 +147,13 @@ export default {
       console.log(lat);
       console.log(lon);
       console.log(building);
+      this.building=building;
       console.log(floor);
       console.log(SSID);
       console.log(IP);
+      this.$router.push({
+					name: 'Profile'
+				});
     }
    
   }

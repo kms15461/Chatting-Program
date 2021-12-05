@@ -241,10 +241,22 @@ router.post('/idDuplicateCheck', async (req, res, next) => {
   }
 });
 
-router.post('/editProfile', verifyMiddleWare, async (req, res, next) => {
+router.get('/SetProfile', verifyMiddleWare, async (req, res, next) => {
+  console.log("enter profile")
   const { id } = req.decoded;
-  const { status, location } = req.body;
-  await query(`UPDATE users SET user_status='${status}', user_location='${Number(location)}' where user_id='${id}'`);
+  
+  const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
+  res.json({
+    queryResult
+  });
+
+
+});
+
+router.post('/EditStatusMsg', verifyMiddleWare, async (req, res, next) => {
+  const { id } = req.decoded;
+  const { statusmsg } = req.body;
+  await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
   res.json({
     success: true
   });
@@ -264,6 +276,7 @@ router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
 });
 
 router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
 
   var data = require("fs").readFileSync("./routes/test.csv", "utf8")
   data = data.split("\r\n")
@@ -274,14 +287,11 @@ router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
   const floor=data[0].split(",")[3];
   const SSID=data[0].split(",")[4];
   const IP=data[0].split(",")[5];
-
+  await query(`UPDATE users SET lat='${lat}', lon='${lon}', building='${building}', floor='${floor}', SSID='${SSID}', IP='${IP}' where user_id='${id}'`);
+  
   res.json({
-    lat : lat,
-    lon : lon,
-    building : building,
-    floor : floor,
-    SSID : SSID,
-    IP : IP,
+    lat : lat, lon : lon, building : building,
+    floor : floor, SSID : SSID, IP : IP,
   });
   
 });

@@ -59,7 +59,7 @@ export default {
 
         // Home page 이동(src/router/index 참고)
         this.$router.push({
-          name: "Home",
+          name: "Friend", //"Home",
         });
 
         ElNotification({

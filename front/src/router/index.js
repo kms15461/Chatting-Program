@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../components/pages/Home';
+//import Home from '../components/pages/Home';
 import SignIn from '../components/pages/SignIn';
 import SignUp from '../components/pages/SignUp';
 import Chat from '../components/pages/Chat';
@@ -12,13 +12,13 @@ import http from '../services/http';
 import { ElNotification } from 'element-plus';
 
 const routes = [
+  //{
+    //path: '/',
+    //name: 'Home',
+    //component: Home
+  //},
   {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/signin',
+    path: '/', //'/signin',
     name: 'SignIn',
     component: SignIn,
   },

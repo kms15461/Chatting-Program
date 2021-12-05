@@ -100,6 +100,11 @@ export default {
         ...QR
       });
     });
+    queryResult2.forEach(QR => {
+      this.queryResult2.push({
+        ...QR
+      });
+    });
   },
   computed: {
     ...mapState('user', ['id', 'friends']),

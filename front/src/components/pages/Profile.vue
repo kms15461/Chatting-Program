@@ -7,12 +7,12 @@
             <span>Profile</span>
           </div>
           <br />
-          <el-form ref="adForm" :model="adForm" label-width="120px" :rules="rules">
+          <el-form ref="form" :model="form" label-width="120px" :rules="rules">
             <el-form-item label="상태메시지">
-              <el-input v-model="adForm.status"></el-input>
+              <el-input v-model="form.status"></el-input>
             </el-form-item>
             <el-form-item label="지역" prop="user_location">
-              <el-select v-model="adForm.user_type">
+              <el-select v-model="form.location">
                 <el-option label="공학관" value=0></el-option>
                 <el-option label="백양관" value=1></el-option>
                 <el-option label="학생회관" value=2></el-option>
@@ -33,42 +33,38 @@
 </template>
 
 <script>
-//import http from '../../services/http';
+import http from '../../services/http';
 import { mapState } from "vuex";
-//import { mapMutations } from "vuex";
-//import { ElNotification } from 'element-plus';
-console.log("friend.vue 하나 만드는 것도 좆같이 어렵네 진짜");
+import { mapMutations } from "vuex";
+import { ElNotification } from 'element-plus';
 
 export default {
-  name: "Profile",
-    computed: {
-      ...mapState('user', ['name', 'id', 'connected']),
-    },
+  name: "editProfile",
+  computed: {
+    ...mapState('user', ['name', 'id', 'connected']),
+  },
   data() {
-    const statusValidator = (rule, value, callback) => {
-      const regex = /^[가-힣 ]{,20}$/; // 20자 이하의 한글 또는 공백
-
-      if (!regex.test(value)) {
-        callback(new Error("20자 이하의 한글 또는 공백을 입력해주세요"));
-      } else {
-        callback();
-      }
-    };
-
-
     return {
-      adForm:{
+      form: {
         status: "",
-        loc: "",
+        location: "",
       },
-      rules: {
-        status: [{ validator: statusValidator, trigger: "blur" }],
-      }
     };
   },
   methods: {
-    editProfile() {
-      
+    ...mapMutations("user", ["updateUser"]),
+
+    async editProfile() {
+      const { success } = (
+        await http.post("/users/editProfile", this.form)
+      ).data;
+      if (success){
+        ElNotification({
+          title: "회원정보수정",
+          message: "회원정보수정",
+          type: "success",
+        });
+      }
     }
   }
 

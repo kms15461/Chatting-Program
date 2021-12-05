@@ -235,4 +235,15 @@ router.post('/idDuplicateCheck', async (req, res, next) => {
   }
 });
 
+router.post('/editProfile', verifyMiddleWare, async (req, res, next) => {
+  const { id } = req.decoded;
+  const { status, location } = req.body;
+  await query(`UPDATE users SET user_status='${status}', user_location='${Number(location)}' where user_id='${id}'`);
+  res.json({
+    success: true
+  });
+
+});
 module.exports = router;
+
+

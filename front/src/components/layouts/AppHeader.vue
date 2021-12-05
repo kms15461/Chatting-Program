@@ -2,7 +2,9 @@
   <div class="app_header">
     <el-row>
       <el-col :span="4">
-        <router-link to="/" class="button"> DATABASE 세미나 </router-link>
+        <div v-if="name == ''">
+          <router-link to="/" class="button"> Sign In </router-link>
+        </div>
       </el-col>
 			<el-col :span="16">
         <div v-if="name !== ''">
@@ -14,7 +16,6 @@
 			<el-col :span="4">
 				<div v-if="name === ''">
 					<router-link to="signup" class="button"> sign up </router-link>
-					<router-link to="signin" class="button"> sign in </router-link>
 				</div>
 				<div v-else>
 					<span>{{ `${name} 님`}}</span>

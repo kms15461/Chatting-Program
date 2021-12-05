@@ -1,7 +1,7 @@
 <template>
   <div class="sign_in">
     <el-row justify="center" align="middle">
-      <el-col :span="6">
+      <el-col :span="7">
         <el-card class="box-card">
           <div class="card-header">
             <span>Sign in</span>
@@ -59,7 +59,7 @@ export default {
 
         // Home page 이동(src/router/index 참고)
         this.$router.push({
-          name: "Home",
+          name: "Friend", //"Home",
         });
 
         ElNotification({

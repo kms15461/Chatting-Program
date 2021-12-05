@@ -24,15 +24,56 @@
           </el-scrollbar>
           <el-row>
             <el-col
-              :span="19">
+              :span="24">
               <el-input :autosize="true" v-model="chatMessage"></el-input>
             </el-col>
+          </el-row>
+          <el-row>
             <el-col
-              :span="1">
+              :span="11">
+              <el-button type="info" class="send_button" @click="sendMessage">send</el-button>
             </el-col>
             <el-col
-              :span="4">
-              <el-button type="info" class="send_button" @click="sendMessage">send</el-button>
+              :span="2">
+            </el-col>
+            <el-col
+              :span="11">
+              <el-button type="info" class="send_button" @click="dialogVisible = true">rendezvous send</el-button>
+              <el-dialog v-model="dialogVisible" width="30%">
+                <el-row justify="center" align="middle" style="height: 50%;">
+                  <el-col
+                    :span="5">
+                    <el-button type="info" class="send_button" @click="sendMessage">3분</el-button>
+                  </el-col>
+                  <el-col
+                    :span="1">
+                  </el-col>
+                  <el-col
+                    :span="5">
+                    <el-button type="info" class="send_button" @click="sendMessage">30분</el-button>
+                  </el-col>
+                  <el-col
+                    :span="1">
+                  </el-col>
+                  <el-col
+                    :span="5">
+                    <el-button type="info" class="send_button" @click="sendMessage">60분</el-button>
+                  </el-col>
+                  <el-col
+                    :span="1">
+                  </el-col>
+                  <el-col
+                    :span="5">
+                    <el-button type="info" class="send_button" @click="sendMessage">지정시간</el-button>
+                  </el-col>
+                </el-row>
+                <el-row justify="center" align="middle" style="height: 50%;">
+                  <el-col
+                    :span="12">
+                    <el-button type="info" class="send_button" @click="sendMessage">rendezvous send</el-button>
+                  </el-col>
+                </el-row>
+              </el-dialog>
             </el-col>
           </el-row>
         </el-card>
@@ -45,8 +86,9 @@
 import { mapState } from 'vuex';
 import http from '../../services/http';
 import { ElNotification } from 'element-plus';
+import { defineComponent, ref } from 'vue'
 
-export default {
+export default defineComponent({
   name: "Chat",
   data() {
     return {
@@ -89,6 +131,13 @@ export default {
   beforeUnmount() {
     this.sockets.unsubscribe('CHAT_MESSAGE');
   },
+  setup() {
+    const dialogVisible = ref(false)
+
+    return {
+      dialogVisible,
+    }
+  },
   methods: {
     sendMessage() {
       if (this.chatMessage.trim() !== '') {
@@ -114,7 +163,8 @@ export default {
       }
     },
   },
-};
+});
+
 </script>
 
 <style scoped>
@@ -158,12 +208,13 @@ p {
 }
 .chat_messages {
   margin-bottom: 10px;
-  height: calc(100% - 65px);
+  height: calc(100% - 80px);
 }
 .chat_input {
   margin-right: 5px;
 }
 .send_button {
   width: 100%;
+  margin: 5px 0 5px 0;
 }
 </style>

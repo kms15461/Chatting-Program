@@ -25,6 +25,14 @@
                 <el-button type="primary" @click="editProfile()">변경하기</el-button>
               </el-col>
             </el-row>
+            <el-row>
+              로그아웃
+              <el-button type="primary" @click="signOut()">확인</el-button>
+            </el-row>
+            <el-row>
+              회원탈퇴
+              <el-button type="primary" @click="Withdrawal()">확인</el-button>
+            </el-row>
           </el-form>
         </el-card>
       </el-col>
@@ -53,7 +61,35 @@ export default {
   },
   methods: {
     ...mapMutations("user", ["updateUser"]),
+		async signOut() {
+			const { success, errorMessage } = (await http.get('/users/signOut')).data;
+			if (success) {
+        // 소켓 연결 끊기
+        this.$socket.disconnect();
 
+				this.updateUser({
+					id: '',
+					name: '',
+          connected: 0
+				});
+				
+				this.$router.push({
+					name: 'SignIn'
+				});
+
+        ElNotification({
+          title: 'Sign out',
+          message: 'success',
+          type: 'success'
+        });
+			} else {
+				ElNotification({
+          title: 'Sign out',
+          message: errorMessage,
+          type: 'error'
+        });
+			}
+		},
     async editProfile() {
       const { success } = (
         await http.post("/users/editProfile", this.form)
@@ -61,11 +97,34 @@ export default {
       if (success){
         ElNotification({
           title: "회원정보수정",
-          message: "회원정보수정",
+          message: "회원정보수정 완료",
           type: "success",
         });
       }
-    }
+    },
+    async Withdrawal() {
+      const { success } = (
+        await http.get("/users/withdrawal")
+      ).data;
+      if (success){
+        this.$socket.disconnect();
+
+				this.updateUser({
+					id: '',
+					name: '',
+          connected: 0
+				});
+				
+				this.$router.push({
+					name: 'SignIn'
+				});
+        ElNotification({
+          title: "회원탈퇴",
+          message: "회원탈퇴 완료",
+          type: "success",
+        });
+      }
+    },
   }
 
 };

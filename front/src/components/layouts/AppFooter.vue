@@ -1,6 +1,6 @@
 <template>
   <div class="app_footer">
-    Footer
+    DB 손해보험팀
   </div>
 </template>
 

@@ -218,6 +218,12 @@ router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
   res.json({queryResult})
 });
 
+router.get('/onlineuser2', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  const queryResult2 = await query(`SELECT * from users where user_connected = 0 and user_id <> '${id}'`);
+  res.json({queryResult2})
+});
+
 
 router.post('/idDuplicateCheck', async (req, res, next) => {
   const { id, password, name, usertype } = req.body;

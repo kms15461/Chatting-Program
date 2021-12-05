@@ -155,6 +155,7 @@ export default {
   data() {
     return {
       queryResult: [],
+      queryResult2: [],
     };
   }, 
 };

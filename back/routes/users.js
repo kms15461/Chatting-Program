@@ -263,6 +263,28 @@ router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
 
 });
 
+router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
+
+  var data = require("fs").readFileSync("./routes/test.csv", "utf8")
+  data = data.split("\r\n")
+  
+  const lat=data[0].split(",")[0];
+  const lon=data[0].split(",")[1];
+  const building=data[0].split(",")[2];
+  const floor=data[0].split(",")[3];
+  const SSID=data[0].split(",")[4];
+  const IP=data[0].split(",")[5];
+
+  res.json({
+    lat : lat,
+    lon : lon,
+    building : building,
+    floor : floor,
+    SSID : SSID,
+    IP : IP,
+  });
+  
+});
 
 module.exports = router;
 

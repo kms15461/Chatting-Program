@@ -11,7 +11,13 @@
             <el-form-item label="상태메시지">
               <el-input v-model="form.status"></el-input>
             </el-form-item>
-            <el-form-item label="지역" prop="user_location">
+
+            <el-row>
+              <el-col :span="6">
+                <el-button type="primary" @click="EditStatusMsg()">변경하기</el-button>
+              </el-col>
+            </el-row>
+            <el-form-item label="현재위치" prop="user_location">
               <el-select v-model="form.location">
                 <el-option label="공학관" value=0></el-option>
                 <el-option label="백양관" value=1></el-option>
@@ -20,9 +26,8 @@
               </el-select>
             </el-form-item>
             <el-row>
-              <el-col :span="18"> </el-col>
               <el-col :span="6">
-                <el-button type="primary" @click="editProfile()">변경하기</el-button>
+                <el-button type="primary" @click="UpdatemyPlace()">업데이트 하기</el-button>
               </el-col>
             </el-row>
             <el-row>
@@ -47,7 +52,7 @@ import { mapMutations } from "vuex";
 import { ElNotification } from 'element-plus';
 
 export default {
-  name: "editProfile",
+  name: "EditStatusMsg",
   computed: {
     ...mapState('user', ['name', 'id', 'connected']),
   },
@@ -55,12 +60,24 @@ export default {
     return {
       form: {
         status: "",
-        location: "",
       },
     };
   },
   methods: {
     ...mapMutations("user", ["updateUser"]),
+
+    async EditStatusMsg() {
+      const { success } = (
+        await http.post("/users/EditStatusMsg", this.form)
+      ).data;
+      if (success){
+        ElNotification({
+          title: "회원정보수정",
+          message: "회원정보수정 완료",
+          type: "success",
+        });
+      }
+    },
 		async signOut() {
 			const { success, errorMessage } = (await http.get('/users/signOut')).data;
 			if (success) {
@@ -90,18 +107,6 @@ export default {
         });
 			}
 		},
-    async editProfile() {
-      const { success } = (
-        await http.post("/users/editProfile", this.form)
-      ).data;
-      if (success){
-        ElNotification({
-          title: "회원정보수정",
-          message: "회원정보수정 완료",
-          type: "success",
-        });
-      }
-    },
     async Withdrawal() {
       const { success } = (
         await http.get("/users/withdrawal")
@@ -125,6 +130,18 @@ export default {
         });
       }
     },
+    async UpdatemyPlace(){
+      const { lat, lon, building, floor, SSID, IP } = (
+        await http.get("/users/UpdatemyPlace")
+      ).data;
+      console.log(lat);
+      console.log(lon);
+      console.log(building);
+      console.log(floor);
+      console.log(SSID);
+      console.log(IP);
+    }
+   
   }
 
 };

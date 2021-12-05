@@ -250,6 +250,20 @@ router.post('/editProfile', verifyMiddleWare, async (req, res, next) => {
   });
 
 });
+
+
+router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
+  const { id } = req.decoded;
+  
+  await query(`DELETE from users where user_id='${id}' `);
+  res.json({
+    success: true
+  });
+
+
+});
+
+
 module.exports = router;
 
 

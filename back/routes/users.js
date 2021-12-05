@@ -225,7 +225,7 @@ router.post('/idDuplicateCheck', async (req, res, next) => {
   if (queryResult.length > 0) {
     res.json({
       success: false,
-      errorMessage: 'Duplicate id'
+      errorMessage: '중복된 아이디입니다.'
     });
   } 
   else {

@@ -56,6 +56,8 @@ export default {
         callback(
           new Error("4~20자 사이의 하나 이상의 영문와 하나 이상의 숫자를 입력해주세요")
         );
+      } else if(!this.id_duplicated){
+        callback(new Error("id 중복체크를 해주세요"))
       } else {
         callback();
       }
@@ -90,7 +92,7 @@ export default {
         password: "",
         password_check: "",
         name: "",
-        user_type: ""
+        user_type: "",
       },
       rules: {
         id: [{ validator: idValidator, trigger: "blur" }],
@@ -99,6 +101,7 @@ export default {
         name: [{ validator: nameValidator, trigger: "blur" }],
         user_type: [],
       },
+      id_duplicated:false,
     };
   },
   methods: {
@@ -129,29 +132,24 @@ export default {
         }
       });
     },
-    idDuplicateCheck() {
-      this.$refs["ruleForm"].validate(async (valid) => {
-        if (valid) {
-          const { success, errorMessage } = (
-            await http.post("/users/idDuplicateCheck", this.ruleForm)
-          ).data;
-          if (success) {
-            ElNotification({
-              title: "중복체크",
-              message: "중복된 아이디가 없습니다",
-              type: "success",
-            });
-          } else {
-            ElNotification({
-              title: "중복체크",
-              message: errorMessage,
-              type: "error",
-            });
-          }
-        } else {
-          return false;
-        }
-      });
+    async idDuplicateCheck() {
+      const { success, errorMessage } = (
+        await http.post("/users/idDuplicateCheck", this.ruleForm)
+      ).data;
+      if (success) {
+        this.id_duplicated=true;
+        ElNotification({
+          title: "중복체크",
+          message: "사용가능한 ID입니다.",
+          type: "success",
+        });
+      } else {
+        ElNotification({
+          title: "중복체크",
+          message: errorMessage,
+          type: "error",
+        });
+      }
     }
   },
 };

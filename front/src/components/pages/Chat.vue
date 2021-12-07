@@ -130,17 +130,41 @@ export default defineComponent({
     rendezvoussendMessage() {
       if (this.chatMessage.trim() !== '') {
         const created_at = Date.now();
+        const expire_time = new Date(created_at);
+        const noticed = 0;
+
+        if (this.radio === '3분'){
+          const durtime = 3;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else if(this.radio === '30분'){
+          const durtime = 30;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else if(this.radio === '60분'){
+          const durtime = 60;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else{
+          const durtime = 3;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+
         this.chatDatas.push({
-          message: this.chatMessage,
+          message: this.chatMessage + expire_time.toLocaleTimeString() + "에 삭제됩니다.",
           type: 'chat_right',
-          created_at
+          created_at,
+          expire_time,
+          noticed
         });
 
         // socket 채팅 전송
         this.$socket.emit('CHAT_MESSAGE', {
-          message: this.chatMessage,
+          message: this.chatMessage + expire_time.toLocaleTimeString() + "에 삭제됩니다.",
           targetId: this.$route.params.userId,
-          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
+          expire_time: new Date(expire_time.setHours(expire_time.getHours()+9)).toISOString().slice(0, 19).replace('T', ' '),
+          noticed: noticed
         })
 
         this.chatMessage = '';

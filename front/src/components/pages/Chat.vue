@@ -15,9 +15,13 @@
             <div ref="inner">
               <div v-for="(chatData, index) in chatDatas" :key="index" :class="`${chatData.type} chat_line`">
                 <p v-if="chatData.type === 'chat_right'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
+                <p v-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '1'">읽음</p>
+                <p v-else-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '0'">읽지 않음</p>
                 <p :class="`${chatData.type}_inner chat_inner`">
                   {{ chatData.message }}
                 </p>
+                <p v-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '1'">읽음</p>
+                <p v-else-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '0'">읽지 않음</p>
                 <p v-if="chatData.type === 'chat_left'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
               </div>
             </div>
@@ -53,7 +57,7 @@
                 <el-row justify="center" align="middle" style="height: 50%;">
                   <el-col
                     :span="12">
-                    <el-button type="info" class="send_button" @click="sendMessage">rendezvous send</el-button>
+                    <el-button type="info" class="send_button" @click="rendezvoussendMessage">rendezvous send</el-button>
                   </el-col>
                 </el-row>
               </el-dialog>
@@ -119,10 +123,33 @@ export default defineComponent({
 
     return {
       dialogVisible,
-      radio: ref('3분만'),
+      radio: ref('3분'),
     }
   },
   methods: {
+    rendezvoussendMessage() {
+      if (this.chatMessage.trim() !== '') {
+        const created_at = Date.now();
+        this.chatDatas.push({
+          message: this.chatMessage,
+          type: 'chat_right',
+          created_at
+        });
+
+        // socket 채팅 전송
+        this.$socket.emit('CHAT_MESSAGE', {
+          message: this.chatMessage,
+          targetId: this.$route.params.userId,
+          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+        })
+
+        this.chatMessage = '';
+
+        this.$nextTick(() => {
+          this.$refs.scrollbar.setScrollTop(this.$refs.inner.clientHeight);
+        });
+      }
+    },
     sendMessage() {
       if (this.chatMessage.trim() !== '') {
         const created_at = Date.now();

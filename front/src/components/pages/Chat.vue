@@ -53,11 +53,12 @@
                       <el-radio-button label="지정시간"></el-radio-button>
                     </el-radio-group>
                   </div>
+                  <el-input-number v-model="num" :step="1" :min="1" />
                 </el-row>
                 <el-row justify="center" align="middle" style="height: 50%;">
                   <el-col
                     :span="12">
-                    <el-button type="info" class="send_button" @click="rendezvoussendMessage">rendezvous send</el-button>
+                    <el-button type="info" class="send_button" @click="[rendezvoussendMessage(), dialogVisible = false]">rendezvous send</el-button>
                   </el-col>
                 </el-row>
               </el-dialog>
@@ -120,10 +121,12 @@ export default defineComponent({
   },
   setup() {
     const dialogVisible = ref(false)
+    const num = ref(1)
 
     return {
       dialogVisible,
       radio: ref('3분'),
+      num,
     }
   },
   methods: {
@@ -146,7 +149,7 @@ export default defineComponent({
           expire_time.setMinutes(expire_time.getMinutes()+durtime);
         }
         else{
-          const durtime = 3;
+          const durtime = this.num;
           expire_time.setMinutes(expire_time.getMinutes()+durtime);
         }
 

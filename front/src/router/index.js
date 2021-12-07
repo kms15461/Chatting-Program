@@ -7,6 +7,7 @@ import Online from '../components/pages/Online';
 import Friend from '../components/pages/Friend';
 import ChatList from '../components/pages/ChatList';
 import Profile from '../components/pages/Profile';
+import Surround from '../components/pages/Surround';
 
 import http from '../services/http';
 import { ElNotification } from 'element-plus';
@@ -55,6 +56,12 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: { authRequired: true }
+  },
+  {
+    path: '/surround',
+    name: 'Surround',
+    component: Surround,
     meta: { authRequired: true }
   }
 ]

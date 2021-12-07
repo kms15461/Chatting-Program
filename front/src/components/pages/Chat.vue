@@ -15,24 +15,53 @@
             <div ref="inner">
               <div v-for="(chatData, index) in chatDatas" :key="index" :class="`${chatData.type} chat_line`">
                 <p v-if="chatData.type === 'chat_right'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
+                <p v-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '1'">읽음</p>
+                <p v-else-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '0'">읽지 않음</p>
                 <p :class="`${chatData.type}_inner chat_inner`">
                   {{ chatData.message }}
                 </p>
+                <p v-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '1'">읽음</p>
+                <p v-else-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '0'">읽지 않음</p>
                 <p v-if="chatData.type === 'chat_left'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
               </div>
             </div>
           </el-scrollbar>
           <el-row>
             <el-col
-              :span="19">
+              :span="24">
               <el-input :autosize="true" v-model="chatMessage"></el-input>
             </el-col>
+          </el-row>
+          <el-row>
             <el-col
-              :span="1">
+              :span="11">
+              <el-button type="info" class="send_button" @click="sendMessage">send</el-button>
             </el-col>
             <el-col
-              :span="4">
-              <el-button type="info" class="send_button" @click="sendMessage">send</el-button>
+              :span="2">
+            </el-col>
+            <el-col
+              :span="11">
+              <el-button type="info" class="send_button" @click="dialogVisible = true">rendezvous send</el-button>
+              <el-dialog v-model="dialogVisible" width="30%">
+                <el-row justify="center" align="middle" style="height: 50%;">
+                  <div>
+                    <el-radio-group v-model="radio">
+                      <el-radio-button label="3분"></el-radio-button>
+                      <el-radio-button label="30분"></el-radio-button>
+                      <el-radio-button label="60분"></el-radio-button>
+                      <el-radio-button label="지정시간"></el-radio-button>
+                    </el-radio-group>
+                  </div>
+                  <el-input-number v-model="num" :step="1" :min="1" />
+                </el-row>
+                <el-row justify="center" align="middle" style="height: 50%;">
+                  <el-col
+                    :span="12">
+                    <el-button type="info" class="send_button" @click="[rendezvoussendMessage(), dialogVisible = false]">rendezvous send</el-button>
+                  </el-col>
+                </el-row>
+              </el-dialog>
             </el-col>
           </el-row>
         </el-card>
@@ -45,8 +74,9 @@
 import { mapState } from 'vuex';
 import http from '../../services/http';
 import { ElNotification } from 'element-plus';
+import { defineComponent, ref } from 'vue'
 
-export default {
+export default defineComponent({
   name: "Chat",
   data() {
     return {
@@ -89,7 +119,64 @@ export default {
   beforeUnmount() {
     this.sockets.unsubscribe('CHAT_MESSAGE');
   },
+  setup() {
+    const dialogVisible = ref(false)
+    const num = ref(1)
+
+    return {
+      dialogVisible,
+      radio: ref('3분'),
+      num,
+    }
+  },
   methods: {
+    rendezvoussendMessage() {
+      if (this.chatMessage.trim() !== '') {
+        const created_at = Date.now();
+        const expire_time = new Date(created_at);
+        const noticed = 0;
+
+        if (this.radio === '3분'){
+          const durtime = 3;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else if(this.radio === '30분'){
+          const durtime = 30;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else if(this.radio === '60분'){
+          const durtime = 60;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else{
+          const durtime = this.num;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+
+        this.chatDatas.push({
+          message: this.chatMessage + expire_time.toLocaleTimeString() + "에 삭제됩니다.",
+          type: 'chat_right',
+          created_at,
+          expire_time,
+          noticed
+        });
+
+        // socket 채팅 전송
+        this.$socket.emit('CHAT_MESSAGE', {
+          message: this.chatMessage + expire_time.toLocaleTimeString() + "에 삭제됩니다.",
+          targetId: this.$route.params.userId,
+          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
+          expire_time: new Date(expire_time.setHours(expire_time.getHours()+9)).toISOString().slice(0, 19).replace('T', ' '),
+          noticed: noticed
+        })
+
+        this.chatMessage = '';
+
+        this.$nextTick(() => {
+          this.$refs.scrollbar.setScrollTop(this.$refs.inner.clientHeight);
+        });
+      }
+    },
     sendMessage() {
       if (this.chatMessage.trim() !== '') {
         const created_at = Date.now();
@@ -114,7 +201,8 @@ export default {
       }
     },
   },
-};
+});
+
 </script>
 
 <style scoped>
@@ -158,12 +246,14 @@ p {
 }
 .chat_messages {
   margin-bottom: 10px;
-  height: calc(100% - 65px);
+  height: calc(100% - 80px);
 }
 .chat_input {
   margin-right: 5px;
 }
 .send_button {
   width: 100%;
+  margin: 5px 0 5px 0;
 }
+
 </style>

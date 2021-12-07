@@ -1,10 +1,46 @@
 <template>
   <div class="online">
     <el-row justify="center" align="middle" style="height: 100%">
-      <el-col :span="6" style="height: 100%">
+      <el-col :span="12" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">
-          <h3 style="text-align: center">Online People</h3>
+          <h3 style="text-align: center">접속중인 사용자</h3>
           <el-table :data="queryResult" style="width: 100%" max-Height="700px">
+            <el-table-column type="index" width="50" />
+            <el-table-column prop="user_id" label="id" />
+            <el-table-column prop="user_name" label="name" />
+            <el-table-column label="friend" align="center">
+              <template #default="scope">
+                <el-button
+                  v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
+                  size="mini"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
+                  type="success"
+                  >
+                  add
+                </el-button>
+                <el-button
+                  v-else
+                  size="mini"
+                  @click="removeFriend(scope.row.id)"
+                  type="danger"
+                  >
+                  remove
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label="chat" align="center">
+              <template #default="scope">
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
+                  >chat</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+          <h3 style="text-align: center">미접속중인 사용자</h3>
+          <el-table :data="queryResult2" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
@@ -55,10 +91,17 @@ export default {
   async created() {
     console.log("ENTER ONLINE VUE");
     const { queryResult } = (await http.get('/users/onlineuser')).data;
+    const { queryResult2 } = (await http.get('/users/onlineuser2')).data;
     console.log(queryResult);
+    console.log(queryResult2);
     console.log("-----------------------------------------");
     queryResult.forEach(QR => {
       this.queryResult.push({
+        ...QR
+      });
+    });
+    queryResult2.forEach(QR => {
+      this.queryResult2.push({
         ...QR
       });
     });
@@ -117,6 +160,7 @@ export default {
   data() {
     return {
       queryResult: [],
+      queryResult2: [],
     };
   }, 
 };

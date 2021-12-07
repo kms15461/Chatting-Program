@@ -218,6 +218,12 @@ router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
   res.json({queryResult})
 });
 
+router.get('/onlineuser2', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  const queryResult2 = await query(`SELECT * from users where user_connected = 0 and user_id <> '${id}'`);
+  res.json({queryResult2})
+});
+
 
 router.post('/idDuplicateCheck', async (req, res, next) => {
   const { id, password, name, usertype } = req.body;
@@ -235,4 +241,61 @@ router.post('/idDuplicateCheck', async (req, res, next) => {
   }
 });
 
+router.get('/SetProfile', verifyMiddleWare, async (req, res, next) => {
+  console.log("enter profile")
+  const { id } = req.decoded;
+  
+  const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
+  res.json({
+    queryResult
+  });
+
+
+});
+
+router.post('/EditStatusMsg', verifyMiddleWare, async (req, res, next) => {
+  const { id } = req.decoded;
+  const { statusmsg } = req.body;
+  await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
+  res.json({
+    success: true
+  });
+
+});
+
+
+router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
+  const { id } = req.decoded;
+  
+  await query(`DELETE from users where user_id='${id}' `);
+  res.json({
+    success: true
+  });
+
+
+});
+
+router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+
+  var data = require("fs").readFileSync("./routes/test.csv", "utf8")
+  data = data.split("\r\n")
+  
+  const lat=data[0].split(",")[0];
+  const lon=data[0].split(",")[1];
+  const building=data[0].split(",")[2];
+  const floor=data[0].split(",")[3];
+  const SSID=data[0].split(",")[4];
+  const IP=data[0].split(",")[5];
+  await query(`UPDATE users SET lat='${lat}', lon='${lon}', building='${building}', floor='${floor}', SSID='${SSID}', IP='${IP}' where user_id='${id}'`);
+  
+  res.json({
+    lat : lat, lon : lon, building : building,
+    floor : floor, SSID : SSID, IP : IP,
+  });
+  
+});
+
 module.exports = router;
+
+

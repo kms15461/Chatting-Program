@@ -7,25 +7,39 @@
             <span>Profile</span>
           </div>
           <br />
-          <el-form ref="adForm" :model="adForm" label-width="120px" :rules="rules">
+          <el-form ref="form" :model="form" label-width="120px" :rules="rules">
             <el-form-item label="상태메시지">
-              <el-input v-model="adForm.status"></el-input>
+              <el-input v-model="form.statusmsg"></el-input>
             </el-form-item>
-            <el-form-item label="지역" prop="user_location">
-              <el-select v-model="adForm.user_type">
-                <el-option label="공학관" value=0></el-option>
-                <el-option label="백양관" value=1></el-option>
-                <el-option label="학생회관" value=2></el-option>
-                <el-option label="신촌역" value=3></el-option>
-              </el-select>
-            </el-form-item>
+          </el-form>
             <el-row>
-              <el-col :span="18"> </el-col>
               <el-col :span="6">
-                <el-button type="primary" @click="editProfile()">변경하기</el-button>
+                <el-button type="primary" @click="EditStatusMsg()">변경하기</el-button>
               </el-col>
             </el-row>
-          </el-form>
+            <el-row :data="userinfo" v-if="userinfo.queryResult">//쿼리가 끝나서 결과물이 돌아왔을때 렌더링
+            <el-col>위도:{{ `${userinfo.queryResult[0].lat} `}} </el-col>
+            <el-col>경도:{{ `${userinfo.queryResult[0].lon} `}} </el-col>
+            <el-col>건물:{{ `${userinfo.queryResult[0].building} `}} </el-col>
+            <el-col>층수:{{ `${userinfo.queryResult[0].floor} `}} </el-col>
+            <el-col>SSID:{{ `${userinfo.queryResult[0].SSID} `}} </el-col>
+            <el-col>IP:{{ `${userinfo.queryResult[0].IP} `}} </el-col>
+              
+            </el-row>
+            <el-row>
+              <el-col :span="6">
+                <el-button type="primary" @click="UpdatemyPlace()">업데이트 하기</el-button>
+              </el-col>
+            </el-row>
+            <el-row>
+              로그아웃
+              <el-button type="primary" @click="signOut()">확인</el-button>
+            </el-row>
+            <el-row>
+              회원탈퇴
+              <el-button type="primary" @click="Withdrawal()">확인</el-button>
+            </el-row>
+          
         </el-card>
       </el-col>
     </el-row>
@@ -33,43 +47,115 @@
 </template>
 
 <script>
-//import http from '../../services/http';
+import http from '../../services/http';
 import { mapState } from "vuex";
-//import { mapMutations } from "vuex";
-//import { ElNotification } from 'element-plus';
-console.log("friend.vue 하나 만드는 것도 좆같이 어렵네 진짜");
+import { mapMutations } from "vuex";
+import { ElNotification } from 'element-plus';
 
 export default {
-  name: "Profile",
-    computed: {
-      ...mapState('user', ['name', 'id', 'connected']),
-    },
+  name: "EditStatusMsg",
+
+  computed: {
+    ...mapState('user', ['name', 'id', 'connected']),
+  },
   data() {
-    const statusValidator = (rule, value, callback) => {
-      const regex = /^[가-힣 ]{,20}$/; // 20자 이하의 한글 또는 공백
-
-      if (!regex.test(value)) {
-        callback(new Error("20자 이하의 한글 또는 공백을 입력해주세요"));
-      } else {
-        callback();
-      }
-    };
-
-
     return {
-      adForm:{
-        status: "",
-        loc: "",
+      userinfo:[],
+      form: {
+        statusmsg: "",
       },
-      rules: {
-        status: [{ validator: statusValidator, trigger: "blur" }],
-      }
     };
   },
+  async created() {
+    console.log("enter created");
+    const queryResult=(await http.get('/users/SetProfile')).data;
+
+    console.log(queryResult);
+    this.userinfo=queryResult;
+  },
   methods: {
-    editProfile() {
-      
+    ...mapMutations("user", ["updateUser"]),
+
+    async EditStatusMsg() {
+      const { success } = (
+        await http.post("/users/EditStatusMsg", this.form)
+      ).data;
+      if (success){
+        ElNotification({
+          title: "회원정보수정",
+          message: "회원정보수정 완료",
+          type: "success",
+        });
+      }
+    },
+		async signOut() {
+			const { success, errorMessage } = (await http.get('/users/signOut')).data;
+			if (success) {
+        // 소켓 연결 끊기
+        this.$socket.disconnect();
+
+				this.updateUser({
+					id: '',
+					name: '',
+          connected: 0
+				});
+				
+				this.$router.push({
+					name: 'SignIn'
+				});
+
+        ElNotification({
+          title: 'Sign out',
+          message: 'success',
+          type: 'success'
+        });
+			} else {
+				ElNotification({
+          title: 'Sign out',
+          message: errorMessage,
+          type: 'error'
+        });
+			}
+		},
+    async Withdrawal() {
+      const { success } = (
+        await http.get("/users/withdrawal")
+      ).data;
+      if (success){
+        this.$socket.disconnect();
+
+				this.updateUser({
+					id: '',
+					name: '',
+          connected: 0
+				});
+				
+				this.$router.push({
+					name: 'SignIn'
+				});
+        ElNotification({
+          title: "회원탈퇴",
+          message: "회원탈퇴 완료",
+          type: "success",
+        });
+      }
+    },
+    async UpdatemyPlace(){
+      const { lat, lon, building, floor, SSID, IP } = (
+        await http.get("/users/UpdatemyPlace")
+      ).data;
+      console.log(lat);
+      console.log(lon);
+      console.log(building);
+      this.building=building;
+      console.log(floor);
+      console.log(SSID);
+      console.log(IP);
+      this.$router.push({
+					name: 'Profile'
+				});
     }
+   
   }
 
 };

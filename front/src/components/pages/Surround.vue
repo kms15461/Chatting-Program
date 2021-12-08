@@ -22,7 +22,7 @@
           <h3 style="text-align: center"></h3>
           <el-row>            
             <el-col :span="9"> </el-col>
-            <el-col :span="4">
+            <el-col align="center">
               <el-button
                   type="primary"
                   @click="$router.push({ name: 'Nearme' })"
@@ -34,6 +34,12 @@
           <el-row align="center"> 
             <el-col align="center">
             <button @click="importTextFile">위치 추가하기</button>
+            </el-col>
+          </el-row>
+          <br>
+          <el-row>
+            <el-col align="center"  >
+              <el-button type="primary" @click="submit(), this.$router.go()">업데이트 하기</el-button>
             </el-col>
           </el-row>
         </el-card>

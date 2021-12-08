@@ -6,10 +6,10 @@
           <h3 style="text-align: center">-{{ $route.params.building }}건물 {{ $route.params.floor }}층 {{ $route.params.SSID }}- 접속중인 사용자</h3>
           <el-table :data="queryResult" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_id" label="id" />
-            <el-table-column prop="user_type" label="type" />
-            <el-table-column prop="user_status" label="상메" />
-            <el-table-column label="friend" align="center">
+            <el-table-column prop="user_name" label="이름" />
+            <el-table-column prop="user_type" label="유저 타입" />
+            <el-table-column prop="user_status" label="상태 메세지" />
+            <el-table-column label="친구" align="center">
               <template #default="scope">
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
@@ -29,7 +29,7 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column label="chat" align="center">
+            <el-table-column label="채팅" align="center">
               <template #default="scope">
                 <el-button
                   size="mini"
@@ -43,9 +43,10 @@
           <h3 style="text-align: center">-{{ $route.params.building }}건물 {{ $route.params.floor }}층 {{ $route.params.SSID }}- 미접속중인 사용자</h3>
           <el-table :data="queryResult2" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_id" label="id" />
-            <el-table-column prop="user_name" label="name" />
-            <el-table-column label="friend" align="center">
+            <el-table-column prop="user_name" label="이름" />
+            <el-table-column prop="user_type" label="유저 타입" />
+            <el-table-column prop="user_status" label="상태 메세지" />
+            <el-table-column label="친구" align="center">
               <template #default="scope">
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
@@ -65,7 +66,7 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column label="chat" align="center">
+            <el-table-column label="채팅" align="center">
               <template #default="scope">
                 <el-button
                   size="mini"

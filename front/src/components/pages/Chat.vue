@@ -135,21 +135,22 @@ export default defineComponent({
         const created_at = Date.now();
         const expire_time = new Date(created_at);
         const noticed = 0;
+        let durtime;
 
         if (this.radio === '3분'){
-          const durtime = 3;
+          durtime = 3;
           expire_time.setMinutes(expire_time.getMinutes()+durtime);
         }
         else if(this.radio === '30분'){
-          const durtime = 30;
+          durtime = 30;
           expire_time.setMinutes(expire_time.getMinutes()+durtime);
         }
         else if(this.radio === '60분'){
-          const durtime = 60;
+          durtime = 60;
           expire_time.setMinutes(expire_time.getMinutes()+durtime);
         }
         else{
-          const durtime = this.num;
+          durtime = this.num;
           expire_time.setMinutes(expire_time.getMinutes()+durtime);
         }
 
@@ -167,7 +168,8 @@ export default defineComponent({
           targetId: this.$route.params.userId,
           created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
           expire_time: new Date(expire_time.setHours(expire_time.getHours()+9)).toISOString().slice(0, 19).replace('T', ' '),
-          noticed: noticed
+          noticed: noticed,
+          durtime: durtime
         })
 
         this.chatMessage = '';
@@ -180,17 +182,21 @@ export default defineComponent({
     sendMessage() {
       if (this.chatMessage.trim() !== '') {
         const created_at = Date.now();
+        const noticed = 0;
+
         this.chatDatas.push({
           message: this.chatMessage,
           type: 'chat_right',
-          created_at
+          created_at,
+          noticed
         });
 
         // socket 채팅 전송
         this.$socket.emit('CHAT_MESSAGE', {
           message: this.chatMessage,
           targetId: this.$route.params.userId,
-          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
+          noticed: noticed,
         })
 
         this.chatMessage = '';

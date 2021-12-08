@@ -1,5 +1,5 @@
 <template>
-  <div class="online">
+  <div class="nearme">
     <el-row justify="center" align="middle" style="height: 100%">
       <el-col :span="12" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">
@@ -8,7 +8,7 @@
               <span>{{ $route.params.building }} {{ $route.params.floor }} {{ $route.params.SSID }}</span>
             </div>
           </template>
-          <h3 style="text-align: center">접속중인 사용자</h3>
+          <h3 style="text-align: center">내 근처에서 접속중인 사용자</h3>
           <el-table :data="queryResult" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
@@ -18,7 +18,7 @@
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
                   size="mini"
-                  @click="addFriend(scope.row.user_id, scope.row.user_name), this.$router.go()"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
                   type="success"
                   >
                   add
@@ -26,7 +26,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.user_id), this.$router.go()"
+                  @click="removeFriend(scope.row.user_id)"
                   type="danger"
                   >
                   remove
@@ -38,13 +38,13 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
                   >chat</el-button
                 >
               </template>
             </el-table-column>
           </el-table>
-          <h3 style="text-align: center">미접속중인 사용자</h3>
+          <h3 style="text-align: center">내 근처에서 미접속중인 사용자</h3>
           <el-table :data="queryResult2" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
@@ -54,7 +54,7 @@
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
                   size="mini"
-                  @click="addFriend(scope.row.user_id, scope.row.user_name), this.$router.go()"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
                   type="success"
                   >
                   add
@@ -62,7 +62,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.user_id), this.$router.go()"
+                  @click="removeFriend(scope.row.user_id)"
                   type="danger"
                   >
                   remove
@@ -74,7 +74,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
                   >chat</el-button
                 >
               </template>
@@ -92,9 +92,8 @@ import { ElNotification } from 'element-plus';
 import http from '../../services/http';
 
 export default {
-  name: "Chat",
+  name: "Nearme",
   async created() {
-    console.log("ENTER ONLINE CREATED");
     var link = document.location.href;
     var para = document.location.href.split("/");
     console.log("--------------------------");
@@ -110,9 +109,11 @@ export default {
     console.log(queryResult2);
     console.log("-----------------------------------------");
     queryResult.forEach(QR => {
-      this.queryResult.push({
-        ...QR
-      });
+      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+        this.queryResult.push({
+          ...QR
+        });
+      }
     });
     queryResult2.forEach(QR => {
       if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
@@ -121,18 +122,6 @@ export default {
         });
       }
     });
-    const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
-    if (success) {
-      this.updateFriends({
-        friends
-      });
-    } else {
-      ElNotification({
-        title: "Add friend",
-        message: errorMessage,
-        type: "error",
-      });
-    }
   },
   computed: {
     ...mapState('user', ['id', 'friends']),
@@ -146,7 +135,6 @@ export default {
       })).data;
 
       if (success) {
-        console.log("친구추가완료!");
         ElNotification({
           title: "Add friend",
           message: "Success",
@@ -162,7 +150,6 @@ export default {
           type: "error",
         });
       }
-      
     },
     async removeFriend(friend_id) {
       const { success, errorMessage } = (await http.post('/users/removeFriends', {
@@ -185,7 +172,6 @@ export default {
           type: "error",
         });
       }
-      
     },
   },
   data() {

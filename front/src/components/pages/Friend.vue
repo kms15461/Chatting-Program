@@ -7,7 +7,9 @@
           <el-row>            
             <el-col :span="20"> </el-col>
             <el-col :span="4">
-              <el-button type="primary">검색</el-button>
+              <el-button type="primary"
+              @click="$router.push({ name: 'FindFriend' })"
+              >검색</el-button>
             </el-col>
           </el-row>
           <h3 style="text-align: center">Online Friend</h3>

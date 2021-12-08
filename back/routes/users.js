@@ -318,7 +318,7 @@ router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
 router.get('/place', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   console.log(id);
-  const queryResult = await query(`SELECT distinct building, floor, SSID, from users where not building is null and not floor is null and not SSID is null order by building asc, floor asc, SSID asc;`);
+  const queryResult = await query(`SELECT distinct building, floor, SSID from users where not building is null and not floor is null and not SSID is null order by building asc, floor asc, SSID asc;`);
   res.json({queryResult})
 });
 

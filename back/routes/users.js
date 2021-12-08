@@ -2,21 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
-var fs = require('fs'); // 1
-var multer   = require('multer'); // 1
-var storage  = multer.diskStorage({ // 2
-  destination(req, file, cb) {
-    cb(null, 'uploadedFiles/');
-  },
-  filename(req, file, cb) {
-    cb(null, `${Date.now()}__${file.originalname}`);
-  },
-});
-var upload = multer({ dest: 'uploadedFiles/' }); // 3-1
-var uploadWithOriginalFilename = multer({ storage: storage }); // 3-2
-
-
-
+const bcrypt = require('bcryptjs');
 
 router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
@@ -31,9 +17,9 @@ router.get('/offlinefriend', verifyMiddleWare, async(req, res, next) => {
 router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;
-  const queryResult = await query(`SELECT * from users where user_id = '${id}' and user_pw = '${password}';`);
+  const queryResult = await query(`SELECT * from users where user_id = '${id}';`);
   console.log(queryResult);
-  if (queryResult.length > 0) {
+  if (queryResult.length > 0 && bcrypt.compareSync(password,queryResult[0].user_pw)) {
     await query(`UPDATE users SET user_connected = 1 WHERE user_id = '${id}';`);
     const jwt = sign({
       id,
@@ -165,9 +151,9 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
   }
 });
 
-router.get('/signOut', verifyMiddleWare, (req, res, next) => {
+router.get('/signOut', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
-  query(`UPDATE users SET user_connected = 0 WHERE user_id = '${id}'`);
+  await query(`UPDATE users SET user_connected = 0 WHERE user_id = '${id}'`);
 
   if (id) {
     res.clearCookie('token').json({
@@ -182,7 +168,7 @@ router.get('/signOut', verifyMiddleWare, (req, res, next) => {
 });
 
 router.post('/signUp', async (req, res, next) => {
-  const { id, password, name, user_type} = req.body;
+  let { id, password, name, user_type} = req.body;
   const id_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,20}$/; // 4~20자리의 문자 및 숫자 1개 이상씩 사용한 정규식
   const name_regex = /^[가-힣a-zA-z]{3,20}$/;
 
@@ -219,7 +205,8 @@ router.post('/signUp', async (req, res, next) => {
       else if (user_type === "company") {
         usertypenum = 4;
       }
-      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, '${usertypenum}')`);
+      password=bcrypt.hashSync(password);
+      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 0, '${usertypenum}')`);
 
       res.json({
         success: true,
@@ -259,7 +246,6 @@ router.post('/idDuplicateCheck', async (req, res, next) => {
 });
 
 router.get('/SetProfile', verifyMiddleWare, async (req, res, next) => {
-  console.log("enter profile")
   const { id } = req.decoded;
   
   const queryResult = await query(`SELECT * from users where user_id = '${id}'`);
@@ -292,29 +278,6 @@ router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
   });
 });
 
-
-
-router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
-  const { id } = req.decoded;
-
-
-  var data = require("fs").readFileSync("./routes/test.csv", "utf8")
-  data = data.split("\r\n")
-  
-  const lat=data[0].split(",")[0];
-  const lon=data[0].split(",")[1];
-  const building=data[0].split(",")[2];
-  const floor=data[0].split(",")[3];
-  const SSID=data[0].split(",")[4];
-  const IP=data[0].split(",")[5];
-  await query(`UPDATE users SET lat='${lat}', lon='${lon}', building='${building}', floor='${floor}', SSID='${SSID}', IP='${IP}' where user_id='${id}'`);
-  
-  res.json({
-    lat : lat, lon : lon, building : building,
-    floor : floor, SSID : SSID, IP : IP,
-  });
-  
-});
 router.get('/place', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   console.log(id);
@@ -322,35 +285,28 @@ router.get('/place', verifyMiddleWare, async(req, res, next) => {
   res.json({queryResult})
 });
 
-router.post('/uploadFile', upload.single('attachment'), function(req,res){ // 4 
-  console.log(req.file);
-  res.render('confirmation', { file:req.file, files:null });
+router.post('/uploadFile',verifyMiddleWare, async(req, res, next) => {
+  console.log("~~~~~~~~~~~~~~~~~~`");
+  const { id } = req.decoded;
+  data=req.body.csvcontents;
+  
+  const lat=data.split(",")[0];
+  const lon=data.split(",")[1];
+  const building=data.split(",")[2];
+  const floor=data.split(",")[3];
+  const SSID=data.split(",")[4];
+  const IP=data.split(",")[5];
+  await query(`UPDATE users SET lat='${lat}', lon='${lon}', building='${building}', floor='${floor}', SSID='${SSID}', IP='${IP}' where user_id='${id}'`);
+  console.log("query finish");
 });
 
-router.post('/uploadFileWithOriginalFilename', uploadWithOriginalFilename.single('attachment'), function(req,res){ // 5
-  res.render('confirmation', { file:req.file, files:null });
-});
-
-router.post('/upload', async (req, res, next) => {
-  console.log("==============");
-  console.log(req.body);
-  var dir = './uploadedFiles';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir); // 2
-  
-  
-  res.json({
-    success : true,
-  });
-
-}); 
 
 router.post('/searchfriend', verifyMiddleWare, async (req, res, next) => {
   console.log("========search friend======");
   const { findstring }=req.body;
   const { id } = req.decoded;
   console.log(findstring);
-  console.log(decodeURI(findstring));
-  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users, friends WHERE user_id <> '${id}' and (user_id LIKE '%${decodeURI(findstring)}%' OR user_name LIKE '%${decodeURI(findstring)}%') ORDER BY user_name ASC;`);
+  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users WHERE user_id <> '${id}' and (user_id LIKE '%${findstring}%' OR user_name LIKE '%${findstring}%') ORDER BY user_name ASC;`);
   console.log(searchresult);
   const newstring=decodeURI(findstring);
   res.json({

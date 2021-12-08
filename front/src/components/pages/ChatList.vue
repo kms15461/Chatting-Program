@@ -60,10 +60,11 @@ export default {
           created_at,
         });
       }
-      this.chatList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      this.chatList.reverse((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      //this.chatList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     });
     if (success) {
-      this.chatList = chatList.sort(
+      this.chatList = chatList.reverse(
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
       );
     } else {

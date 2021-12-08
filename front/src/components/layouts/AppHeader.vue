@@ -5,6 +5,9 @@
         <div v-if="name == ''">
           <router-link to="/" class="button"> Sign In </router-link>
         </div>
+        <div v-else>
+          <span>{{ `${name} 님`}}</span>  
+        </div>
       </el-col>
 			<el-col :span="16">
         <div v-if="name !== ''">
@@ -16,11 +19,12 @@
 			<el-col :span="4">
 				<div v-if="name === ''">
 					<router-link to="signup" class="button"> sign up </router-link>
-				</div>
+          
+        </div>
 				<div v-else>
-					<span>{{ `${name} 님`}}</span>
 					<el-button @click="signOut()" size="small" style="margin-left: 10px;">sign out</el-button>
-          <router-link to="Profile" class="button"> Profile </router-link>
+          <el-link el-link :underline="false" @click="$router.push({ name: 'Profile' })">Profile</el-link>
+          
         </div>
 			</el-col>
     </el-row>

@@ -34,16 +34,24 @@ module.exports = io => {
 			socket.name = name;
 			socket.join('online');
 			updateOnlineList(io, 'online');
-			console.log(`JOIN ONLINE ${id}`);
 		} else {
 			socket.disconnect();
 		}
 
 		socket.on('CHAT_MESSAGE', async msg => {
 			const targetSockets = findSocketById(io, msg.targetId);
+			const chatroom=await query(`SELECT chatid from chat_room where ((user1id = '${msg.targetId}') and (user2id = '${socket.user_id}')) or ((user2id = '${msg.targetId}') and (user1id = '${socket.user_id}'))`);
 
-			await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
-
+			if (chatroom.length==0){
+				await query(`INSERT INTO chat_room(user1id, user2id) values ('${socket.user_id}', '${msg.targetId}' ) ;`)
+			}
+			if (!msg.expire_time){
+				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, noticed) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
+			}
+			else{
+				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed, durtime) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}', '${msg.durtime}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
+			}
+			
 			if (targetSockets.length > 0) {
 				targetSockets.forEach(soc => soc.emit('CHAT_MESSAGE', {
 					message: msg.message,

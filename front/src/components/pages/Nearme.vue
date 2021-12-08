@@ -19,7 +19,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
                   >chat</el-button
                 >
               </template>
@@ -36,7 +36,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
                   >chat</el-button
                 >
               </template>

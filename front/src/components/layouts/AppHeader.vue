@@ -23,7 +23,7 @@
         </div>
 				<div v-else>
 					<el-button @click="signOut()" size="small" style="margin-left: 10px;">sign out</el-button>
-          <el-link el-link :underline="false" @click="$router.push({ name: 'Profile' })">Profile List</el-link>
+          <el-link el-link :underline="false" @click="$router.push({ name: 'Profile' })">Profile</el-link>
           
         </div>
 			</el-col>

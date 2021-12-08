@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
+const bcrypt = require('bcryptjs');
 
 router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
@@ -16,9 +17,9 @@ router.get('/offlinefriend', verifyMiddleWare, async(req, res, next) => {
 router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;
-  const queryResult = await query(`SELECT * from users where user_id = '${id}' and user_pw = '${password}';`);
+  const queryResult = await query(`SELECT * from users where user_id = '${id}';`);
   console.log(queryResult);
-  if (queryResult.length > 0) {
+  if (queryResult.length > 0 && bcrypt.compareSync(password,queryResult[0].user_pw)) {
     await query(`UPDATE users SET user_connected = 1 WHERE user_id = '${id}';`);
     const jwt = sign({
       id,
@@ -167,7 +168,7 @@ router.get('/signOut', verifyMiddleWare, (req, res, next) => {
 });
 
 router.post('/signUp', async (req, res, next) => {
-  const { id, password, name, user_type} = req.body;
+  let { id, password, name, user_type} = req.body;
   const id_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,20}$/; // 4~20자리의 문자 및 숫자 1개 이상씩 사용한 정규식
   const name_regex = /^[가-힣a-zA-z]{3,20}$/;
 
@@ -204,6 +205,7 @@ router.post('/signUp', async (req, res, next) => {
       else if (user_type === "company") {
         usertypenum = 4;
       }
+      password=bcrypt.hashSync(password);
       await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, '${usertypenum}')`);
 
       res.json({

@@ -94,6 +94,7 @@ import http from '../../services/http';
 export default {
   name: "Chat",
   async created() {
+    console.log("ENTER ONLINE CREATED");
     var link = document.location.href;
     var para = document.location.href.split("/");
     console.log("--------------------------");
@@ -109,11 +110,9 @@ export default {
     console.log(queryResult2);
     console.log("-----------------------------------------");
     queryResult.forEach(QR => {
-      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
-        this.queryResult.push({
-          ...QR
-        });
-      }
+      this.queryResult.push({
+        ...QR
+      });
     });
     queryResult2.forEach(QR => {
       if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
@@ -147,6 +146,7 @@ export default {
       })).data;
 
       if (success) {
+        console.log("친구추가완료!");
         ElNotification({
           title: "Add friend",
           message: "Success",
@@ -162,6 +162,7 @@ export default {
           type: "error",
         });
       }
+      
     },
     async removeFriend(friend_id) {
       const { success, errorMessage } = (await http.post('/users/removeFriends', {
@@ -184,6 +185,7 @@ export default {
           type: "error",
         });
       }
+      
     },
   },
   data() {

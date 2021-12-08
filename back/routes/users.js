@@ -151,9 +151,9 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
   }
 });
 
-router.get('/signOut', verifyMiddleWare, (req, res, next) => {
+router.get('/signOut', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
-  query(`UPDATE users SET user_connected = 0 WHERE user_id = '${id}'`);
+  await query(`UPDATE users SET user_connected = 0 WHERE user_id = '${id}'`);
 
   if (id) {
     res.clearCookie('token').json({
@@ -206,7 +206,7 @@ router.post('/signUp', async (req, res, next) => {
         usertypenum = 4;
       }
       password=bcrypt.hashSync(password);
-      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 1, '${usertypenum}')`);
+      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 0, '${usertypenum}')`);
 
       res.json({
         success: true,
@@ -306,7 +306,7 @@ router.post('/searchfriend', verifyMiddleWare, async (req, res, next) => {
   const { findstring }=req.body;
   const { id } = req.decoded;
   console.log(findstring);
-  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users, friends WHERE user_id <> '${id}' and (user_id LIKE '%${findstring}%' OR user_name LIKE '%${findstring}%') ORDER BY user_name ASC;`);
+  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users WHERE user_id <> '${id}' and (user_id LIKE '%${findstring}%' OR user_name LIKE '%${findstring}%') ORDER BY user_name ASC;`);
   console.log(searchresult);
   res.json({
     success : true,

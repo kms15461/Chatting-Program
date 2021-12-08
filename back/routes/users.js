@@ -3,6 +3,8 @@ const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
 
+
+
 router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   const on_friend = await query(`SELECT * from users,friends where user_connected = 1 and user_id=followee and follower = '${id}';`);
@@ -294,6 +296,12 @@ router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
     floor : floor, SSID : SSID, IP : IP,
   });
   
+});
+router.get('/place', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  console.log(id);
+  const queryResult = await query(`SELECT distinct building, floor, SSID from users order by building asc, floor asc, SSID asc;`);
+  res.json({queryResult})
 });
 
 module.exports = router;

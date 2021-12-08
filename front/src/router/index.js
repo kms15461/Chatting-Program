@@ -35,7 +35,7 @@ const routes = [
     meta: { authRequired: true }
   },
   {
-    path: '/online',
+    path: '/online/:building/:floor/:SSID',
     name: 'Online',
     component: Online,
     meta: { authRequired: true }

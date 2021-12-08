@@ -11,7 +11,7 @@ router.get('/list', verifyMiddleWare, async (req, res, next) => {
     const chatList = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
       WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
       SELECT u.user_id, u.user_name, b.content, b.sendtime FROM b, users u WHERE sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
-      chatList.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); });
+    chatList.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); })
     res.json({
       success: true,
       chatList

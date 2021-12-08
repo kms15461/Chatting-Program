@@ -31,14 +31,16 @@
             </el-col>
           </el-row>
           <h3 style="text-align: center"></h3>
+          <el-row align="center"> 
+            <el-col align="center">
+            <button @click="importTextFile">불러오기</button>
+            </el-col>
+          </el-row>
           <el-row>            
-            <el-col :span="10"> </el-col>
-            <el-col :span="4">
-              <el-button
-                  type="primary"
-                  @click="$router.push({ name: 'Nearme' })"
-                  >위치 추가하기</el-button
-                >
+            
+            <el-col align="center">
+              <br>
+              <el-button type="primary" @click="submit(), this.$router.go()"  :model="form"  >위치 추가하기</el-button>
             </el-col>
           </el-row>
         </el-card>
@@ -49,10 +51,12 @@
 
 <script>
 import { mapState} from "vuex";
+import { mapMutations } from "vuex";
+
 import http from '../../services/http';
 
 export default {
-  name: "Chat",
+  name: "Surround",
   async created() {
     console.log("ENTER surround VUE");
     const { queryResult } = (await http.get('/users/place')).data;
@@ -71,8 +75,39 @@ export default {
   data() {
     return {
       queryResult: [],
+      form: {
+        csvcontents:"",
+      },
     };
-  }, 
+  },
+  methods: {
+    ...mapMutations("user", ["updateUser"]),
+    async submit(){
+      console.log("============");
+      
+      console.log(this.form.csvcontents);
+      const { success } = (await http.post("/users/uploadFile", this.form)).data;
+      console.log(success);
+    },
+    async importTextFile() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'text/plain'; // 확장자가 xxx, yyy 일때, ".xxx, .yyy"
+      // this 접근을 위해 선언 필요
+      const self = this;
+      input.onchange = function () {
+        const file = new FileReader();
+        file.onload = () => {
+          self.$data.textData = file.result;
+          self.$data.form.csvcontents=file.result;
+        };
+        file.readAsText(this.files[0]);
+      };
+      input.click();
+      console.log("~~~~~~~~~~~~~````");
+      console.log(this.form.csvcontents);
+    },
+  }
 };
 </script>
 

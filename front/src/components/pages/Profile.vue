@@ -31,7 +31,7 @@
             <button @click="importTextFile">불러오기</button>
             <el-row>
               <el-col :span="6">
-                <el-button type="primary" @click="submit()">업데이트 하기</el-button>
+                <el-button type="primary" @click="submit(), this.$router.go()">업데이트 하기</el-button>
               </el-col>
             </el-row>
             <el-row>
@@ -62,14 +62,11 @@ export default {
   },
   data() {
     return {
-      textData:'',
-      csvfile:'',
       userinfo:[],
       form: {
         csvcontents:"", 
         statusmsg: "",
       },
-      
     };
   },
   async created() {
@@ -143,30 +140,8 @@ export default {
         });
       }
     },
-    async UpdatemyPlace(){
-      const { lat, lon, building, floor, SSID, IP } = (
-        await http.get("/users/UpdatemyPlace")
-      ).data;
-      console.log(lat);
-      console.log(lon);
-      console.log(building);
-      this.building=building;
-      console.log(floor);
-      console.log(SSID);
-      console.log(IP);
-      this.$router.push({
-					name: 'Profile'
-				});
-    },
-    fileSelect(){
-      console.log("------------");
-      this.form.csvfile=this.$refs.csvfile.files[0];
-      console.log(this.form.csvfile);
-    },
     async submit(){
-      console.log("============");
       
-      console.log(this.form.csvcontents);
       const { success } = (await http.post("/users/uploadFile", this.form)).data;
       console.log(success);   
     },
@@ -179,7 +154,6 @@ export default {
       input.onchange = function () {
         const file = new FileReader();
         file.onload = () => {
-          self.$data.textData = file.result;
           self.$data.form.csvcontents=file.result;
         };
         file.readAsText(this.files[0]);

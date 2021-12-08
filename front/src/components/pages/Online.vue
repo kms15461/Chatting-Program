@@ -21,7 +21,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.id)"
+                  @click="removeFriend(scope.row.user_id)"
                   type="danger"
                   >
                   remove
@@ -57,7 +57,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.id)"
+                  @click="removeFriend(scope.row.user_id)"
                   type="danger"
                   >
                   remove

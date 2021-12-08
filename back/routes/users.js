@@ -318,7 +318,7 @@ router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
 router.get('/place', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   console.log(id);
-  const queryResult = await query(`SELECT distinct building, floor, SSID from users order by building asc, floor asc, SSID asc;`);
+  const queryResult = await query(`SELECT distinct building, floor, SSID from users where not building is null and not floor is null and not SSID is null order by building asc, floor asc, SSID asc;`);
   res.json({queryResult})
 });
 
@@ -343,6 +343,39 @@ router.post('/upload', async (req, res, next) => {
   });
 
 }); 
+
+router.post('/searchfriend', verifyMiddleWare, async (req, res, next) => {
+  console.log("========search friend======");
+  const { findstring }=req.body;
+  const { id } = req.decoded;
+  console.log(findstring);
+  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users, friends WHERE (user_id LIKE '%${findstring}%' OR user_name LIKE '%${findstring}%') ORDER BY user_name ASC;`);
+  console.log(searchresult);
+  res.json({
+    success : true,
+    searchresult: searchresult
+  });
+
+}); 
+
+router.get('/nearme1', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  const queryResult3 = await query(`SELECT A.user_id, A.user_name, A.user_status, A.user_type, (6371*acos(cos(radians(A.lat))*cos(radians(B.lat))*cos(radians(B.lon) -radians(A.lon))+sin(radians(A.lat))*sin(radians(B.lat)))) as distance FROM users A, users B WHERE B.user_id in (SELECT user_id from users where user_id = '${id}') and A.user_id in (SELECT user_id from users where user_connected = 1 and user_id <> '${id}') HAVING distance<0.5 ORDER BY distance`);
+  console.log("——————ENTER surround————————");
+  console.log(queryResult3)
+  console.log("——————QUIT surround————————");
+  res.json({queryResult3})
+});
+
+router.get('/nearme2', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  const queryResult4 = await query(`SELECT A.user_id, A.user_name, A.user_status, A.user_type, (6371*acos(cos(radians(A.lat))*cos(radians(B.lat))*cos(radians(B.lon) -radians(A.lon))+sin(radians(A.lat))*sin(radians(B.lat)))) as distance FROM users A, users B WHERE B.user_id in (SELECT user_id from users where user_id = '${id}') and A.user_id in (SELECT user_id from users where user_connected = 0 and user_id <> '${id}') HAVING distance<0.5 ORDER BY distance`);
+  console.log("——————ENTER surround————————");
+  console.log(queryResult4)
+  console.log("——————QUIT surround————————");
+  res.json({queryResult4})
+});
+
 
 module.exports = router;
 

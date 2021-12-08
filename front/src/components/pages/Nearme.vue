@@ -9,30 +9,11 @@
             </div>
           </template>
           <h3 style="text-align: center">내 근처에서 접속중인 사용자</h3>
-          <el-table :data="queryResult" style="width: 100%" max-Height="700px">
+          <el-table :data="queryResult3" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
-            <el-table-column label="friend" align="center">
-              <template #default="scope">
-                <el-button
-                  v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
-                  size="mini"
-                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
-                  type="success"
-                  >
-                  add
-                </el-button>
-                <el-button
-                  v-else
-                  size="mini"
-                  @click="removeFriend(scope.row.user_id)"
-                  type="danger"
-                  >
-                  remove
-                </el-button>
-              </template>
-            </el-table-column>
+            <el-table-column prop="user_type" label="유저 타입" />
+            <el-table-column prop="user_status" label="상태 메세지" />
             <el-table-column label="chat" align="center">
               <template #default="scope">
                 <el-button
@@ -45,30 +26,11 @@
             </el-table-column>
           </el-table>
           <h3 style="text-align: center">내 근처에서 미접속중인 사용자</h3>
-          <el-table :data="queryResult2" style="width: 100%" max-Height="700px">
+          <el-table :data="queryResult4" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="name" />
-            <el-table-column label="friend" align="center">
-              <template #default="scope">
-                <el-button
-                  v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
-                  size="mini"
-                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
-                  type="success"
-                  >
-                  add
-                </el-button>
-                <el-button
-                  v-else
-                  size="mini"
-                  @click="removeFriend(scope.row.user_id)"
-                  type="danger"
-                  >
-                  remove
-                </el-button>
-              </template>
-            </el-table-column>
+            <el-table-column prop="user_type" label="유저 타입" />
+            <el-table-column prop="user_status" label="상태 메세지" />
             <el-table-column label="chat" align="center">
               <template #default="scope">
                 <el-button
@@ -103,24 +65,46 @@ export default {
     console.log(para[6]);
     console.log("--------------------------");
     console.log("ENTER ONLINE VUE");
-    const { queryResult } = (await http.get('/users/onlineuser')).data;
-    const { queryResult2 } = (await http.get('/users/onlineuser2')).data;
-    console.log(queryResult);
-    console.log(queryResult2);
+    const { queryResult3 } = (await http.get('/users/nearme1')).data;
+    const { queryResult4 } = (await http.get('/users/nearme2')).data;
+    console.log(queryResult3);
     console.log("-----------------------------------------");
-    queryResult.forEach(QR => {
-      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
-        this.queryResult.push({
-          ...QR
-        });
+    
+    queryResult3.forEach(QR => {
+      if (QR.user_type==1){
+          QR.user_type='일반';
       }
+      else if (QR.user_type==2){
+          QR.user_type='학생';
+      }
+      else if (QR.user_type==3){
+          QR.user_type='강사';
+      }
+      else if (QR.user_type==4){
+          QR.user_type='기업';
+      }
+
+      this.queryResult3.push({
+        ...QR
+      });
     });
-    queryResult2.forEach(QR => {
-      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
-        this.queryResult2.push({
-          ...QR
-        });
+    queryResult4.forEach(QR => {
+      if (QR.user_type==1){
+          QR.user_type='일반';
       }
+      else if (QR.user_type==2){
+          QR.user_type='학생';
+      }
+      else if (QR.user_type==3){
+          QR.user_type='강사';
+      }
+      else if (QR.user_type==4){
+          QR.user_type='기업';
+      }
+
+      this.queryResult4.push({
+        ...QR
+      });
     });
   },
   computed: {
@@ -176,8 +160,8 @@ export default {
   },
   data() {
     return {
-      queryResult: [],
-      queryResult2: [],
+      queryResult3: [],
+      queryResult4: [],
     };
   }, 
 };

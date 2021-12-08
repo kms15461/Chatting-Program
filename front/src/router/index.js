@@ -8,6 +8,7 @@ import Friend from '../components/pages/Friend';
 import ChatList from '../components/pages/ChatList';
 import Profile from '../components/pages/Profile';
 import Surround from '../components/pages/Surround';
+import FindFriend from '../components/pages/FindFriend';
 import Nearme from '../components/pages/Nearme';
 
 import http from '../services/http';
@@ -64,6 +65,11 @@ const routes = [
     name: 'Surround',
     component: Surround,
     meta: { authRequired: true }
+  },
+  {
+    path: '/findfriend',
+    name: 'FindFriend',
+    component: FindFriend,
   },
   {
     path: '/nearme',

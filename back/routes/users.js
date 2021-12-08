@@ -2,21 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
-var fs = require('fs'); // 1
-var multer   = require('multer'); // 1
-var storage  = multer.diskStorage({ // 2
-  destination(req, file, cb) {
-    cb(null, 'uploadedFiles/');
-  },
-  filename(req, file, cb) {
-    cb(null, `${Date.now()}__${file.originalname}`);
-  },
-});
-var upload = multer({ dest: 'uploadedFiles/' }); // 3-1
-var uploadWithOriginalFilename = multer({ storage: storage }); // 3-2
-
-
-
 
 router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
@@ -322,27 +307,21 @@ router.get('/place', verifyMiddleWare, async(req, res, next) => {
   res.json({queryResult})
 });
 
-router.post('/uploadFile', upload.single('attachment'), function(req,res){ // 4 
-  console.log(req.file);
-  res.render('confirmation', { file:req.file, files:null });
+router.post('/uploadFile',verifyMiddleWare, async(req, res, next) => {
+  console.log("~~~~~~~~~~~~~~~~~~`");
+  const { id } = req.decoded;
+  data=req.body.csvcontents;
+  
+  const lat=data.split(",")[0];
+  const lon=data.split(",")[1];
+  const building=data.split(",")[2];
+  const floor=data.split(",")[3];
+  const SSID=data.split(",")[4];
+  const IP=data.split(",")[5];
+  await query(`UPDATE users SET lat='${lat}', lon='${lon}', building='${building}', floor='${floor}', SSID='${SSID}', IP='${IP}' where user_id='${id}'`);
+  console.log("query finish");
 });
 
-router.post('/uploadFileWithOriginalFilename', uploadWithOriginalFilename.single('attachment'), function(req,res){ // 5
-  res.render('confirmation', { file:req.file, files:null });
-});
-
-router.post('/upload', async (req, res, next) => {
-  console.log("==============");
-  console.log(req.body);
-  var dir = './uploadedFiles';
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir); // 2
-  
-  
-  res.json({
-    success : true,
-  });
-
-}); 
 
 router.post('/searchfriend', verifyMiddleWare, async (req, res, next) => {
   console.log("========search friend======");

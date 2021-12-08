@@ -306,13 +306,15 @@ router.post('/searchfriend', verifyMiddleWare, async (req, res, next) => {
   const { findstring }=req.body;
   const { id } = req.decoded;
   console.log(findstring);
-  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users WHERE user_id <> '${id}' and (user_id LIKE '%${findstring}%' OR user_name LIKE '%${findstring}%') ORDER BY user_name ASC;`);
+  const newstring=decodeURI(findstring);
+  console.log(newstring);
+  const searchresult = await query(`SELECT DISTINCT user_id, user_name, user_status FROM users WHERE user_id <> '${id}' and (user_id LIKE '%${newstring}%' OR user_name LIKE '%${newstring}%') ORDER BY user_name ASC;`);
   console.log(searchresult);
   res.json({
     success : true,
-    searchresult: searchresult
+    searchresult: searchresult,
+    newstring: newstring
   });
-
 }); 
 
 router.get('/nearme1', verifyMiddleWare, async(req, res, next) => {

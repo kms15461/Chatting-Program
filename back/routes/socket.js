@@ -42,8 +42,13 @@ module.exports = io => {
 		socket.on('CHAT_MESSAGE', async msg => {
 			const targetSockets = findSocketById(io, msg.targetId);
 
-			await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
-
+			if (!msg.expire_time){
+				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, noticed) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
+			}
+			else{
+				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed, durtime) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}', '${msg.durtime}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
+			}
+			
 			if (targetSockets.length > 0) {
 				targetSockets.forEach(soc => soc.emit('CHAT_MESSAGE', {
 					message: msg.message,

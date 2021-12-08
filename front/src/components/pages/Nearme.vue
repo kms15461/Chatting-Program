@@ -6,10 +6,10 @@
           <h3 style="text-align: center">내 근처에서 접속중인 사용자</h3>
           <el-table :data="queryResult3" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_name" label="name" />
+            <el-table-column prop="user_name" label="이름" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
-            <el-table-column label="friend" align="center">
+            <el-table-column label="친구" align="center">
               <template #default="scope">
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
@@ -29,7 +29,7 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column label="chat" align="center">
+            <el-table-column label="채팅" align="center">
               <template #default="scope">
                 <el-button
                   size="mini"
@@ -43,10 +43,10 @@
           <h3 style="text-align: center">내 근처에서 미접속중인 사용자</h3>
           <el-table :data="queryResult4" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_name" label="name" />
+            <el-table-column prop="user_name" label="이름" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
-            <el-table-column label="friend" align="center">
+            <el-table-column label="친구" align="center">
               <template #default="scope">
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
@@ -66,7 +66,7 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column label="chat" align="center">
+            <el-table-column label="채팅" align="center">
               <template #default="scope">
                 <el-button
                   size="mini"

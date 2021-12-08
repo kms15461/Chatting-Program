@@ -34,7 +34,6 @@ module.exports = io => {
 			socket.name = name;
 			socket.join('online');
 			updateOnlineList(io, 'online');
-			console.log(`JOIN ONLINE ${id}`);
 		} else {
 			socket.disconnect();
 		}

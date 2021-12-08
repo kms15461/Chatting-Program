@@ -10,10 +10,10 @@ router.get('/list', verifyMiddleWare, async (req, res, next) => {
   if (id) {
     const chatList = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
       WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
-      SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=1 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
+      SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=1 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id) ORDER BY b.sendtime ASC;`))[1];
     const chatList2 = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
       WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
-      SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=0 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
+      SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=0 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id) ORDER BY b.sendtime ASC;`))[1];
     chatList.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); })
     chatList2.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); })
     res.json({
@@ -37,7 +37,7 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
     await query(`UPDATE message set noticed=1 where (receiverid = '${id}') and (noticed = 0);`);
     const chatDatas = await query(`SELECT content as message, a.f_i as from_id, a.t_i as to_id, sendtime as created_at, noticed, expire_time
       FROM message, (SELECT f.user_id as f_i, t.user_id as t_i FROM users f, users t WHERE (f.user_id = '${id}' and t.user_id = '${targetId}') OR (t.user_id = '${id}' and f.user_id = '${targetId}')) a 
-      WHERE (senderid = a.f_i and receiverid = a.t_i) ORDER BY sendtime ASC;`);
+      WHERE (senderid = a.f_i and receiverid = a.t_i) ORDER BY sendtime DESC;`);
 
     chatDatas.forEach(function(chatlist) { chatlist.message=cryptr.cryption.decrypt(chatlist.message); })
     const senderloc=await query(`select lat, lon from users where user_id='${id}'`)
@@ -52,14 +52,14 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
     const distance=(6371*Math.acos(Math.cos(Math.radians(senderlat))*Math.cos(Math.radians(receiverlat))*Math.cos(Math.radians(receiverlon) -Math.radians(senderlon))+Math.sin(Math.radians(senderlat))*Math.sin(Math.radians(receiverlat))));
     const far =  distance> 0.5;
     res.json({
-      success: true,
+      success1: true,
       far: far,
       chatDatas
     });
   } else {
     res.json({
-      success: false,
-      errorMessage: 'Authentication is required'
+      success1: false,
+      errorMessage1: 'Authentication is required'
     });
   }
 });

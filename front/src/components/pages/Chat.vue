@@ -1,5 +1,4 @@
 <template>
-  
   <div class="chat">
     <el-row
       justify="center"
@@ -10,6 +9,23 @@
           <template #header >
             <div class="card-header">
               <span>{{ $route.params.userId }}</span>
+              <br>
+              <el-button
+                v-if="!this.friends.find(el => el.user_id === $route.params.userId)"
+                size="mini"
+                @click="addFriend($route.params.userId), this.$router.go()"
+                type="success"
+                >
+                add
+              </el-button>
+              <el-button
+                v-else
+                size="mini"
+                @click="removeFriend($route.params.userId), this.$router.go()"
+                type="danger"
+                >
+                remove
+              </el-button>
             </div>
           </template>
           <el-scrollbar class="chat_messages" ref="scrollbar" view-style="height: 100%;">
@@ -85,6 +101,7 @@ import { mapState } from 'vuex';
 import http from '../../services/http';
 import { ElNotification } from 'element-plus';
 import { defineComponent, ref } from 'vue'
+import { mapMutations } from "vuex";
 
 export default defineComponent({
   name: "Chat",
@@ -96,12 +113,12 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState('user', ['id']),
+    ...mapState('user', ['id', 'friends']),
   },
   async created() {
     // 이전 대화 내용 가져오기
-    const { success, far, chatDatas, errorMessage } = (await http.get(`/chats/chatData/${this.$route.params.userId}`)).data;
-    if (success) {
+    const { success1, far, chatDatas, errorMessage1 } = (await http.get(`/chats/chatData/${this.$route.params.userId}`)).data;
+    if (success1) {
       chatDatas.forEach(chatData => {
         this.chatDatas.push({
           
@@ -116,7 +133,7 @@ export default defineComponent({
     } else {
       ElNotification({
         title: 'Get prev chat datas',
-        message: errorMessage,
+        message: errorMessage1,
         type: 'error'
       });
     }
@@ -128,6 +145,18 @@ export default defineComponent({
       });
       this.chatDatas.sort((a, b) => a.created_at - b.created_at);
     });
+    const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
+    if (success) {
+      this.updateFriends({
+        friends
+      });
+    } else {
+      ElNotification({
+        title: "Add/Remove friend",
+        message: errorMessage,
+        type: "error",
+      });
+    }
   },
   beforeUnmount() {
     this.sockets.unsubscribe('CHAT_MESSAGE');
@@ -143,6 +172,7 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapMutations('user', ['updateFriends']),
     rendezvoussendMessage() {
       if (this.chatMessage.trim() !== '') {
         const created_at = Date.now();
@@ -218,6 +248,53 @@ export default defineComponent({
           this.$refs.scrollbar.setScrollTop(this.$refs.inner.clientHeight);
         });
       }
+    },
+    async addFriend(friend_id) {
+      const { success, errorMessage } = (await http.post('/users/addFriends', {
+        friend_id
+      })).data;
+
+      if (success) {
+        console.log("친구추가완료!");
+        ElNotification({
+          title: "Add friend",
+          message: "Success",
+          type: "success",
+        });
+        this.updateFriends({
+          friends: [...this.friends, { id: friend_id }]
+        });
+      } else {
+        ElNotification({
+          title: "Add friend",
+          message: errorMessage,
+          type: "error",
+        });
+      }
+      
+    },
+    async removeFriend(friend_id) {
+      const { success, errorMessage } = (await http.post('/users/removeFriends', {
+        friend_id
+      })).data;
+
+      if (success) {
+        ElNotification({
+          title: "Remove friend",
+          message: "Success",
+          type: "success",
+        });
+        this.updateFriends({
+          friends: this.friends.filter(friend => friend.id !== friend_id)
+        });
+      } else {
+        ElNotification({
+          title: "Remove friend",
+          message: errorMessage,
+          type: "error",
+        });
+      }
+      
     },
   },
 });

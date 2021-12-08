@@ -56,7 +56,7 @@ module.exports = io => {
 			
 			if (targetSockets.length > 0) {
 				targetSockets.forEach(soc => soc.emit('CHAT_MESSAGE', {
-					message: cryptr.cryption.encrypt(msg.message),
+					message: msg.message,
 					from_id: socket.user_id,
 					from_name: socket.name,
 					created_at: msg.created_at,

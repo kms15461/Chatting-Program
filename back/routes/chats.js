@@ -10,11 +10,17 @@ router.get('/list', verifyMiddleWare, async (req, res, next) => {
   if (id) {
     const chatList = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
       WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
-      SELECT u.user_id, u.user_name, b.content, b.sendtime FROM b, users u WHERE sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
+      SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=1 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
+    console.log(chatList);
+    const chatList2 = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
+    WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
+    SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=0 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
+    console.log(chatList2);
     chatList.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); })
     res.json({
       success: true,
-      chatList
+      chatList,
+      chatList2
     });
   } else {
     res.json({

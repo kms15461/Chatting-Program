@@ -3,7 +3,7 @@
     <el-row justify="center" align="middle" style="height: 100%">
       <el-col :span="12" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">
-          <h3 style="text-align: center">{{ $route.params.building }} {{ $route.params.floor }} {{ $route.params.SSID }} 접속중인 사용자</h3>
+          <h3 style="text-align: center">-{{ $route.params.building }}건물 {{ $route.params.floor }}층 {{ $route.params.SSID }}- 접속중인 사용자</h3>
           <el-table :data="queryResult" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
@@ -40,7 +40,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <h3 style="text-align: center">{{ $route.params.building }} {{ $route.params.floor }} {{ $route.params.SSID }} 미접속중인 사용자</h3>
+          <h3 style="text-align: center">-{{ $route.params.building }}건물 {{ $route.params.floor }}층 {{ $route.params.SSID }}- 미접속중인 사용자</h3>
           <el-table :data="queryResult2" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />

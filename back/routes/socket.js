@@ -62,6 +62,10 @@ module.exports = io => {
 					noticed: msg.noticed
 				}));
 			}
+
+			if (msg.durtime){
+				setTimeout(() => query(`UPDATE message SET content = "삭제된 메세지 입니다." WHERE sendtime = '${msg.created_at}';`), msg.durtime * 60 * 1000);
+			}
 		});
 
 		socket.on("disconnect", () => {0

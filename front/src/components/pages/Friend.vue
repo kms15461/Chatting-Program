@@ -76,7 +76,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.user_id)"
+                  @click="removeFriend(scope.row.user_id), this.$router.go()" 
                   type="danger"
                   >
                   remove

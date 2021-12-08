@@ -17,9 +17,20 @@
                 <p v-if="chatData.type === 'chat_right'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
                 <p v-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '1'">읽음</p>
                 <p v-else-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '0'">읽지 않음</p>
+                <div v-if="chatData.type ==='chat_right'">
                 <p :class="`${chatData.type}_inner chat_inner`">
                   {{ chatData.message }}
                 </p>
+                </div>
+                <div v-else>
+                <p v-if="true" :class="`${chatData.type}_inner chat_inner`" >
+
+                  ""공간밖의 메세지입니다""
+                </p>
+                <p v-else>
+                  {{ chatData.message }}
+                </p>
+                </div>
                 <p v-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '1'">읽음</p>
                 <p v-else-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '0'">읽지 않음</p>
                 <p v-if="chatData.type === 'chat_left'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>

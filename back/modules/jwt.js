@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const cryptoKey = 'hello!';
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr('myTotalySecretKey');
 
 // sign은 데이터로 jwt를 만듬
 exports.sign = data => jwt.sign(data, cryptoKey);
@@ -15,3 +17,5 @@ exports.verifyMiddleWare = (req, res, next) => {
     req.decoded = token ? jwt.verify(token, cryptoKey) : {};
     next();
 };
+
+exports.cryption = cryptr;

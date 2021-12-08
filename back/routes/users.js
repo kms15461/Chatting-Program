@@ -262,7 +262,7 @@ router.post('/EditStatusMsg', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
   const { statusmsg } = req.body;
   await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
-  const name_regex = /^[가-힣a-zA-z]{1,20}$/;
+  const name_regex = /^.{0,20}$/;
   if (!name_regex.test(statusmsg)) {
     res.json({
       success: false,

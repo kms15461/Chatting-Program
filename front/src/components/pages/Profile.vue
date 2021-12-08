@@ -7,9 +7,9 @@
             <span>Profile</span>
           </div>
           <br />
-          <el-form ref="form" :model="form" label-width="120px" :rules="rules">
-            <el-form-item label="상태메시지">
-              <el-input v-model="form.statusmsg"></el-input>
+          <el-form ref="ruleForm" :model="ruleForm" label-width="120px" :rules="rules">
+            <el-form-item label="상태메시지" prop="statusmsg">
+              <el-input v-model="ruleForm.statusmsg"></el-input>
             </el-form-item>
           </el-form>
             <el-row>
@@ -62,7 +62,7 @@ export default {
   },
   data() {
     const status_Validator = (rule, value, callback) => {
-      const regex = /^[가-힣a-zA-z]{1,20}$/; 
+      const regex = /^.{0,20}$/; 
       if (!regex.test(value)) {
         callback(new Error("20자 이하의 상태메세지를 작성해주세요~!"));
       } else {
@@ -74,7 +74,7 @@ export default {
       rules: {
         statusmsg: [{ validator: status_Validator, trigger: "blur" }],
       },
-      form: {
+      ruleForm: {
         csvcontents:"", 
         statusmsg: "",
       },
@@ -88,10 +88,10 @@ export default {
     ...mapMutations("user", ["updateUser"]),
 
     EditStatusMsg() {
-      this.$refs["form"].validate(async (valid) => {
+      this.$refs["ruleForm"].validate(async (valid) => {
         if (valid) {
           const { success, errorMessage } = (
-          await http.post("/users/EditStatusMsg", this.form)
+          await http.post("/users/EditStatusMsg", this.ruleForm)
           ).data;
           if (success) {
             ElNotification({
@@ -168,7 +168,7 @@ export default {
     },
     async submit(){
       
-      const { success } = (await http.post("/users/uploadFile", this.form)).data;
+      const { success } = (await http.post("/users/uploadFile", this.ruleForm)).data;
       console.log(success);   
     },
     async importTextFile() {
@@ -180,7 +180,7 @@ export default {
       input.onchange = function () {
         const file = new FileReader();
         file.onload = () => {
-          self.$data.form.csvcontents=file.result;
+          self.$data.ruleForm.csvcontents=file.result;
         };
         file.readAsText(this.files[0]);
       };

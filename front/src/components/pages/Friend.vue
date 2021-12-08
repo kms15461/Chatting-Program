@@ -1,7 +1,7 @@
 <template>
   <div class="friend">
     <el-row justify="center" align="middle" style="height: 100%">
-      <el-col :span="8" style="height: 100%">
+      <el-col :span="15" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">          
           <h3 style="text-align: center">Friend List</h3>
           <el-row>            
@@ -16,7 +16,9 @@
           <el-table :data="on_friend" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
-            <el-table-column prop="user_name" label="name" />
+            <el-table-column prop="user_name" label="이름" />
+            <el-table-column prop="user_type" label="유저 타입" />
+            <el-table-column prop="user_status" label="상태 메세지" />
             <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
                     <span v-if="scope.row.user_connected === 1" class="online"> Online </span>

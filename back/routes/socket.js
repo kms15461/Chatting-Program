@@ -40,14 +40,10 @@ module.exports = io => {
 
 		socket.on('CHAT_MESSAGE', async msg => {
 			const targetSockets = findSocketById(io, msg.targetId);
-			console.log("메세지 insert", msg);
 			const chatroom=await query(`SELECT chatid from chat_room where ((user1id = '${msg.targetId}') and (user2id = '${socket.user_id}')) or ((user2id = '${msg.targetId}') and (user1id = '${socket.user_id}'))`);
-			console.log("채팅방 번호: ", chatroom);
-			console.log("채팅방 번호: ", chatroom.length);
-			
+
 			if (chatroom.length==0){
-				console.log("if문 진입");
-				await query(`INSERT INTO chat_room(user1id, user2id) values ('${socket.user_id}', '${msg.targetId}' ) `);
+				await query(`INSERT INTO chat_room(user1id, user2id) values ('${socket.user_id}', '${msg.targetId}' ) ;`)
 			}
 			if (!msg.expire_time){
 				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, noticed) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)

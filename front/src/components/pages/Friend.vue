@@ -15,7 +15,6 @@
           <h3 style="text-align: center">Online Friend</h3>
           <el-table :data="on_friend" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_id" label="id" />
             <el-table-column prop="user_name" label="이름" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
@@ -59,8 +58,9 @@
           <h3 style="text-align: center">Offline Friend</h3>
           <el-table :data="off_friend" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
-            <el-table-column prop="user_id" label="id" />
-            <el-table-column prop="user_name" label="name" />
+            <el-table-column prop="user_name" label="이름" />
+            <el-table-column prop="user_type" label="유저 타입" />
+            <el-table-column prop="user_status" label="상태 메세지" />
             <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
                     <span v-if="scope.row.user_connected === 1" class="online"> Online </span>
@@ -146,6 +146,18 @@ export default {
     console.log(on_friend);
     console.log("-------------on----------------------------");
     on_friend.forEach(on => {
+      if (on.user_type==1){
+          on.user_type='일반';
+      }
+      else if (on.user_type==2){
+          on.user_type='학생';
+      }
+      else if (on.user_type==3){
+          on.user_type='강사';
+      }
+      else if (on.user_type==4){
+          on.user_type='기업';
+      }
       this.on_friend.push({
         ...on
       });
@@ -154,6 +166,18 @@ export default {
     console.log(off_friend);
     console.log("--------------off---------------------------");
     off_friend.forEach(off => {
+      if (off.user_type==1){
+          off.user_type='일반';
+      }
+      else if (off.user_type==2){
+          off.user_type='학생';
+      }
+      else if (off.user_type==3){
+          off.user_type='강사';
+      }
+      else if (off.user_type==4){
+          off.user_type='기업';
+      }
       this.off_friend.push({
         ...off
       });

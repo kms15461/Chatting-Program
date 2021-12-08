@@ -18,7 +18,7 @@
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
                   size="mini"
-                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name), this.$router.go()"
                   type="success"
                   >
                   add
@@ -26,7 +26,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.user_id)"
+                  @click="removeFriend(scope.row.user_id), this.$router.go()"
                   type="danger"
                   >
                   remove
@@ -38,7 +38,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
                   >chat</el-button
                 >
               </template>
@@ -54,7 +54,7 @@
                 <el-button
                   v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
                   size="mini"
-                  @click="addFriend(scope.row.user_id, scope.row.user_name)"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name), this.$router.go()"
                   type="success"
                   >
                   add
@@ -62,7 +62,7 @@
                 <el-button
                   v-else
                   size="mini"
-                  @click="removeFriend(scope.row.user_id)"
+                  @click="removeFriend(scope.row.user_id), this.$router.go()"
                   type="danger"
                   >
                   remove
@@ -74,7 +74,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.id } })"
+                  @click="$router.push({ name: 'Chat', params: { userId: scope.row.user_id } })"
                   >chat</el-button
                 >
               </template>
@@ -122,6 +122,18 @@ export default {
         });
       }
     });
+    const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
+    if (success) {
+      this.updateFriends({
+        friends
+      });
+    } else {
+      ElNotification({
+        title: "Add friend",
+        message: errorMessage,
+        type: "error",
+      });
+    }
   },
   computed: {
     ...mapState('user', ['id', 'friends']),

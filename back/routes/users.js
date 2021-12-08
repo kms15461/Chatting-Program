@@ -344,6 +344,24 @@ router.post('/upload', async (req, res, next) => {
 
 }); 
 
+router.get('/nearme1', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  const queryResult3 = await query(`SELECT A.user_id, A.user_name, A.user_status, A.user_type, (6371*acos(cos(radians(A.lat))*cos(radians(B.lat))*cos(radians(B.lon) -radians(A.lon))+sin(radians(A.lat))*sin(radians(B.lat)))) as distance FROM users A, users B WHERE B.user_id in (SELECT user_id from users where user_id = '${id}') and A.user_id in (SELECT user_id from users where user_connected = 1 and user_id <> '${id}') HAVING distance<0.5 ORDER BY distance`);
+  console.log("——————ENTER surround————————");
+  console.log(queryResult3)
+  console.log("——————QUIT surround————————");
+  res.json({queryResult3})
+});
+
+router.get('/nearme2', verifyMiddleWare, async(req, res, next) => {
+  const { id } = req.decoded;
+  const queryResult4 = await query(`SELECT A.user_id, A.user_name, A.user_status, A.user_type, (6371*acos(cos(radians(A.lat))*cos(radians(B.lat))*cos(radians(B.lon) -radians(A.lon))+sin(radians(A.lat))*sin(radians(B.lat)))) as distance FROM users A, users B WHERE B.user_id in (SELECT user_id from users where user_id = '${id}') and A.user_id in (SELECT user_id from users where user_connected = 0 and user_id <> '${id}') HAVING distance<0.5 ORDER BY distance`);
+  console.log("——————ENTER surround————————");
+  console.log(queryResult4)
+  console.log("——————QUIT surround————————");
+  res.json({queryResult4})
+});
+
 module.exports = router;
 
 

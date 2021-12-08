@@ -58,7 +58,6 @@ router.post('/signIn', async (req, res, next) => {
 });
 
 router.get('/whoAmI', verifyMiddleWare, async (req, res, next) => {
-  console.log(req.decoded);
   const { id, name , connected} = req.decoded;
 
   if (id) {
@@ -96,12 +95,13 @@ router.get('/friends', verifyMiddleWare, async (req, res, next) => {
 router.post('/addFriends', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
   const { friend_id } = req.body;
-
+  console.log("접속id: ", id);
+  console.log("친구id: ", friend_id);
   if (id) {
     if (friend_id) {
       const friends_array = await query(`SELECT * FROM friends WHERE (follower, 
         followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
-
+      console.log('쿼리결과: ', friends_array)
       if (friends_array.length > 0) {
         res.json({
           success: false,
@@ -318,7 +318,7 @@ router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
 router.get('/place', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   console.log(id);
-  const queryResult = await query(`SELECT distinct building, floor, SSID from users order by building asc, floor asc, SSID asc;`);
+  const queryResult = await query(`SELECT distinct building, floor, SSID, from users where not building is null and not floor is null and not SSID is null order by building asc, floor asc, SSID asc;`);
   res.json({queryResult})
 });
 

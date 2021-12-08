@@ -49,20 +49,9 @@ module.exports = io => {
 				const encrtpyedmsg = cryptr.cryption.encrypt(msg.message);
 				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, noticed) SELECT f.user_id, t.user_id, '${encrtpyedmsg}', '${msg.created_at}', c.chatid, '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
 			}
-<<<<<<< HEAD
-			else{	
-				//랑데뷰전송일 때
-				//'${socket.user_id}' : 로그인한사람
-				//'${msg.targetId}' : 받는사람
-				//if (sender가 상대 receiver가 나일 때 ) : 랑데부 메세지인지
-				//	if sender receiver 500m이내
-				//		insert ~~~~~~~~~~~~	
-				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed, durtime) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}', '${msg.durtime}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
-=======
 			else{
 				const encrtpyedmsg = cryptr.cryption.encrypt(msg.message);
 				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed, durtime) SELECT f.user_id, t.user_id, '${encrtpyedmsg}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}', '${msg.durtime}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
->>>>>>> f67f601d83f192a96bbce9fe249cba9ee8f12a9b
 			}
 			
 			if (targetSockets.length > 0) {

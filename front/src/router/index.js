@@ -9,6 +9,7 @@ import ChatList from '../components/pages/ChatList';
 import Profile from '../components/pages/Profile';
 import Surround from '../components/pages/Surround';
 import FindFriend from '../components/pages/FindFriend';
+import FindFriendResult from '../components/pages/FindFriendResult';
 import Nearme from '../components/pages/Nearme';
 
 import http from '../services/http';
@@ -70,6 +71,11 @@ const routes = [
     path: '/findfriend',
     name: 'FindFriend',
     component: FindFriend,
+  },
+  {
+    path: '/findfriendresult/:searchstring',
+    name: 'FindFriendResult',
+    component: FindFriendResult,
   },
   {
     path: '/nearme',

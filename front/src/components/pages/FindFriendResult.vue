@@ -1,5 +1,5 @@
 <template>
-  <div class="findfriend">
+  <div class="findfriendresult">
     <el-row justify="center" align="middle" style="height: 100%">
       <el-col :span="8" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">          
@@ -10,7 +10,7 @@
             </el-col>
             <el-input v-model="form.findstring"></el-input>
             <el-button type="primary"
-            @click="$router.push({ name: 'FindFriendResult', params: { searchstring: this.form.findstring} })"
+            @click="$router.replace({ name: 'FindFriendResult', params: { searchstring: this.form.findstring} })"
             >검색</el-button>
           </el-row>          
           <h3 style="text-align: center">Find Result</h3>
@@ -28,6 +28,12 @@
                   @click="addFriend(scope.row.user_id), this.$router.go()"
                   type="success"
                   >
+                <!-- <el-button
+                  v-if="!this.friends.find(friend => friend.user_id === scope.row.user_id)"
+                  size="mini"
+                  @click="addFriend(scope.row.user_id)"
+                  type="success"
+                  > -->
                   add
                 </el-button>
                 <el-button
@@ -48,13 +54,13 @@
 </template>
 
 <script>
-console.log("enter findfriend.vue");
+console.log("enter findfriendresult.vue");
 import { mapState, mapMutations } from "vuex";
 import { ElNotification } from 'element-plus';
 import http from '../../services/http';
 
 export default {
-  name: "FindFriend",
+  name: "FindFriendResult",
   async created() {
     const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
     if (success) {
@@ -68,6 +74,12 @@ export default {
         type: "error",
       });
     }
+    var para = document.location.href.split("/");
+    console.log("===para===");
+    console.log(this.form.findstring);
+    this.form.findstring=para[4];
+    this.searchFriend();
+    console.log(this.form.findstring);
   },
   computed: {
     ...mapState('user', ['id', 'friends']),
@@ -120,7 +132,7 @@ export default {
       }
     },
     async searchFriend() {
-      const { success, searchresult } = (
+      const { success, searchresult, newstring } = (
         await http.post("/users/searchfriend", this.form)
       ).data;
       console.log("removing");
@@ -134,6 +146,9 @@ export default {
       });
       this.tablelength=searchresult.length;
       console.log(searchresult.length);
+      console.log("==========newstring==========");
+      console.log(newstring);
+      this.form.findstring=newstring;
           
       if (success) {
         ElNotification({

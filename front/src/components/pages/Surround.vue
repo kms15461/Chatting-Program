@@ -19,6 +19,7 @@
               </template>
             </el-table-column>     
           </el-table>
+          <h3 style="text-align: center"></h3>
           <el-row>            
             <el-col :span="10"> </el-col>
             <el-col :span="4">
@@ -26,6 +27,17 @@
                   type="primary"
                   @click="$router.push({ name: 'Nearme' })"
                   >내 근처 500m</el-button
+                >
+            </el-col>
+          </el-row>
+          <h3 style="text-align: center"></h3>
+          <el-row>            
+            <el-col :span="10"> </el-col>
+            <el-col :span="4">
+              <el-button
+                  type="primary"
+                  @click="$router.push({ name: 'Nearme' })"
+                  >위치 추가하기</el-button
                 >
             </el-col>
           </el-row>

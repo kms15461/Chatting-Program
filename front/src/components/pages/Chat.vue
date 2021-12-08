@@ -1,7 +1,6 @@
 <template>
   
   <div class="chat">
-    {{this.far}}
     <el-row
       justify="center"
       align="middle"
@@ -105,13 +104,13 @@ export default defineComponent({
     if (success) {
       chatDatas.forEach(chatData => {
         this.chatDatas.push({
+          
           ...chatData,
           type: chatData.from_id === this.id ? 'chat_right' : 'chat_left'
         });
 
         this.chatDatas.sort((a, b) => a.created_at - b.created_at);
         this.far=far;
-        console.log("far:", this.far);
         
       });
     } else {
@@ -127,7 +126,6 @@ export default defineComponent({
         ...msg,
         type: 'chat_left'
       });
-      
       this.chatDatas.sort((a, b) => a.created_at - b.created_at);
     });
   },

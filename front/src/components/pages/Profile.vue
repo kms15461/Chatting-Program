@@ -159,6 +159,7 @@ export default {
         file.readAsText(this.files[0]);
       };
       input.click();
+
     },
   }
 

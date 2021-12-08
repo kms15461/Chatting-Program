@@ -3,17 +3,32 @@
     <el-row justify="center" align="middle" style="height: 100%">
       <el-col :span="12" style="height: 100%">
         <el-card style="height: 100%" body-style="height: 100%;">
-          <template #header >
-            <div class="card-header">
-              <span>{{ $route.params.building }} {{ $route.params.floor }} {{ $route.params.SSID }}</span>
-            </div>
-          </template>
           <h3 style="text-align: center">내 근처에서 접속중인 사용자</h3>
           <el-table :data="queryResult3" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_name" label="name" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
+            <el-table-column label="friend" align="center">
+              <template #default="scope">
+                <el-button
+                  v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
+                  size="mini"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name), this.$router.go()"
+                  type="success"
+                  >
+                  add
+                </el-button>
+                <el-button
+                  v-else
+                  size="mini"
+                  @click="removeFriend(scope.row.user_id), this.$router.go()"
+                  type="danger"
+                  >
+                  remove
+                </el-button>
+              </template>
+            </el-table-column>
             <el-table-column label="chat" align="center">
               <template #default="scope">
                 <el-button
@@ -31,6 +46,26 @@
             <el-table-column prop="user_name" label="name" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
+            <el-table-column label="friend" align="center">
+              <template #default="scope">
+                <el-button
+                  v-if="!this.friends.find(el => el.user_id === scope.row.user_id)"
+                  size="mini"
+                  @click="addFriend(scope.row.user_id, scope.row.user_name), this.$router.go()"
+                  type="success"
+                  >
+                  add
+                </el-button>
+                <el-button
+                  v-else
+                  size="mini"
+                  @click="removeFriend(scope.row.user_id), this.$router.go()"
+                  type="danger"
+                  >
+                  remove
+                </el-button>
+              </template>
+            </el-table-column>
             <el-table-column label="chat" align="center">
               <template #default="scope">
                 <el-button
@@ -106,6 +141,18 @@ export default {
         ...QR
       });
     });
+    const { success, errorMessage, friends } = (await http.get('/users/friends')).data;
+    if (success) {
+      this.updateFriends({
+        friends
+      });
+    } else {
+      ElNotification({
+        title: "Add friend",
+        message: errorMessage,
+        type: "error",
+      });
+    }
   },
   computed: {
     ...mapState('user', ['id', 'friends']),

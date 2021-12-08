@@ -10,7 +10,7 @@
         <div v-if="name !== ''">
           <el-link el-link :underline="false" @click="$router.push({ name: 'Friend' })">Friend List</el-link>
           <el-link el-link :underline="false" @click="$router.push({ name: 'ChatList' })">Chat List</el-link>
-          <el-link el-link :underline="false" @click="$router.push({ name: 'Online' })">내 주변(Online)</el-link>
+          <el-link el-link :underline="false" @click="$router.push({ name: 'Surround' })">내 주변(Online)</el-link>
         </div>
       </el-col>
 			<el-col :span="4">

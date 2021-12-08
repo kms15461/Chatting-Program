@@ -35,9 +35,21 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
       WHERE (senderid = a.f_i and receiverid = a.t_i) ORDER BY sendtime ASC;`);
 
     chatDatas.forEach(function(chatlist) { chatlist.message=cryptr.cryption.decrypt(chatlist.message); })
-
+    const senderloc=await query(`select lat, lon from users where user_id='${id}'`)
+    const senderlat=Number(senderloc[0].lat);
+    const senderlon=Number(senderloc[0].lon);
+    const receiverloc=await query(`select lat, lon from users where user_id='${targetId}'`)
+    const receiverlat=Number(receiverloc[0].lat);
+    const receiverlon=Number(receiverloc[0].lon);
+    Math.radians = function(degrees) {
+      return degrees * Math.PI / 180;
+    };
+    const distance=(6371*Math.acos(Math.cos(Math.radians(senderlat))*Math.cos(Math.radians(receiverlat))*Math.cos(Math.radians(receiverlon) -Math.radians(senderlon))+Math.sin(Math.radians(senderlat))*Math.sin(Math.radians(receiverlat))));
+    console.log('거리:', distance);
+    const far =  distance> 0.5;
     res.json({
       success: true,
+      far: far,
       chatDatas
     });
   } else {

@@ -1,5 +1,7 @@
 <template>
+  
   <div class="chat">
+    {{this.far}}
     <el-row
       justify="center"
       align="middle"
@@ -14,23 +16,21 @@
           <el-scrollbar class="chat_messages" ref="scrollbar" view-style="height: 100%;">
             <div ref="inner">
               <div v-for="(chatData, index) in chatDatas" :key="index" :class="`${chatData.type} chat_line`">
+                
+                <div v-if="(chatData.type ==='chat_left') && (chatData.expire_time) && (this.far)" >
+                  <p :class="`${chatData.type}_inner chat_inner`">
+                    ""공간밖의 메세지입니다""
+                  </p>
+                </div>
+                <div v-else>
+                  <p :class="`${chatData.type}_inner chat_inner`">
+                  {{ chatData.message }}
+                  </p>
+                </div>
+                
                 <p v-if="chatData.type === 'chat_right'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
                 <p v-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '1'">읽음</p>
                 <p v-else-if="chatData.type === 'chat_right' && `${chatData.noticed}` === '0'">읽지 않음</p>
-                <div v-if="chatData.type ==='chat_right'">
-                <p :class="`${chatData.type}_inner chat_inner`">
-                  {{ chatData.message }}
-                </p>
-                </div>
-                <div v-else>
-                <p v-if="true" :class="`${chatData.type}_inner chat_inner`" >
-
-                  ""공간밖의 메세지입니다""
-                </p>
-                <p v-else>
-                  {{ chatData.message }}
-                </p>
-                </div>
                 <p v-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '1'">읽음</p>
                 <p v-else-if="chatData.type === 'chat_left' && `${chatData.noticed}` === '0'">읽지 않음</p>
                 <p v-if="chatData.type === 'chat_left'" :class="`${chatData.type}_time`">{{ new Date(chatData.created_at).toLocaleTimeString() }}</p>
@@ -91,6 +91,7 @@ export default defineComponent({
   name: "Chat",
   data() {
     return {
+      far: '',
       chatDatas: [],
       chatMessage: '',
     }
@@ -100,7 +101,7 @@ export default defineComponent({
   },
   async created() {
     // 이전 대화 내용 가져오기
-    const { success, chatDatas, errorMessage } = (await http.get(`/chats/chatData/${this.$route.params.userId}`)).data;
+    const { success, far, chatDatas, errorMessage } = (await http.get(`/chats/chatData/${this.$route.params.userId}`)).data;
     if (success) {
       chatDatas.forEach(chatData => {
         this.chatDatas.push({
@@ -109,6 +110,9 @@ export default defineComponent({
         });
 
         this.chatDatas.sort((a, b) => a.created_at - b.created_at);
+        this.far=far;
+        console.log("far:", this.far);
+        
       });
     } else {
       ElNotification({

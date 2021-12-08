@@ -1,6 +1,7 @@
 const cookie = require('cookie');
 const { verify } = require('../modules/jwt');
 const { query } = require('../modules/db');
+const cryptr = require('../modules/jwt');
 
 const getIdAndName = socket => socket.handshake.headers['cookie'] && cookie.parse(socket.handshake.headers['cookie']).token && verify(cookie.parse(socket.handshake.headers['cookie']).token) || {};
 const updateOnlineList = (io, roomName) => {
@@ -47,15 +48,17 @@ module.exports = io => {
 				await query(`INSERT INTO chat_room(user1id, user2id) values ('${socket.user_id}', '${msg.targetId}' ) ;`)
 			}
 			if (!msg.expire_time){
-				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, noticed) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
+				const encrtpyedmsg = cryptr.cryption.encrypt(msg.message);
+				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, noticed) SELECT f.user_id, t.user_id, '${encrtpyedmsg}', '${msg.created_at}', c.chatid, '${msg.noticed}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
 			}
 			else{
-				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed, durtime) SELECT f.user_id, t.user_id, '${msg.message}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}', '${msg.durtime}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
+				const encrtpyedmsg = cryptr.cryption.encrypt(msg.message);
+				await query(`INSERT INTO message(senderid, receiverid, content, sendtime, chatid, expire_time, noticed, durtime) SELECT f.user_id, t.user_id, '${encrtpyedmsg}', '${msg.created_at}', c.chatid, '${msg.expire_time}', '${msg.noticed}', '${msg.durtime}' FROM users f, users t, chat_room c WHERE f.user_id = '${socket.user_id}' and t.user_id = '${msg.targetId}' and ((c.user1id = '${socket.user_id}' and c.user2id = '${msg.targetId}') or (c.user1id = '${msg.targetId}' and c.user2id = '${socket.user_id}'));`)
 			}
 			
 			if (targetSockets.length > 0) {
 				targetSockets.forEach(soc => soc.emit('CHAT_MESSAGE', {
-					message: msg.message,
+					message: cryptr.cryption.encrypt(msg.message),
 					from_id: socket.user_id,
 					from_name: socket.name,
 					created_at: msg.created_at,
@@ -65,7 +68,8 @@ module.exports = io => {
 			}
 
 			if (msg.durtime){
-				setTimeout(() => query(`UPDATE message SET content = "삭제된 메세지 입니다." WHERE sendtime = '${msg.created_at}';`), msg.durtime * 60 * 1000);
+				const encrtpyeddeletedmsg = cryptr.cryption.encrypt("삭제된 메세지 입니다.");
+				setTimeout(() => query(`UPDATE message SET content = '${encrtpyeddeletedmsg}' WHERE sendtime = '${msg.created_at}';`), msg.durtime * 60 * 1000);
 			}
 		});
 

@@ -41,7 +41,8 @@ module.exports = io => {
 		socket.on('CHAT_MESSAGE', async msg => {
 			const targetSockets = findSocketById(io, msg.targetId);
 			const chatroom=await query(`SELECT chatid from chat_room where ((user1id = '${msg.targetId}') and (user2id = '${socket.user_id}')) or ((user2id = '${msg.targetId}') and (user1id = '${socket.user_id}'))`);
-
+			let today = new Date(); 
+			console.log(today);
 			if (chatroom.length==0){
 				await query(`INSERT INTO chat_room(user1id, user2id) values ('${socket.user_id}', '${msg.targetId}' ) ;`)
 			}

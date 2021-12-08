@@ -8,11 +8,8 @@ import Friend from '../components/pages/Friend';
 import ChatList from '../components/pages/ChatList';
 import Profile from '../components/pages/Profile';
 import Surround from '../components/pages/Surround';
-<<<<<<< HEAD
 import FindFriend from '../components/pages/FindFriend';
-=======
 import Nearme from '../components/pages/Nearme';
->>>>>>> 20bbdca6fc51016019966122501d148545491ee5
 
 import http from '../services/http';
 import { ElNotification } from 'element-plus';
@@ -70,15 +67,14 @@ const routes = [
     meta: { authRequired: true }
   },
   {
-<<<<<<< HEAD
     path: '/findfriend',
     name: 'FindFriend',
     component: FindFriend,
-=======
+  },
+  {
     path: '/nearme',
     name: 'Nearme',
     component: Nearme,
->>>>>>> 20bbdca6fc51016019966122501d148545491ee5
     meta: { authRequired: true }
   }
 ]

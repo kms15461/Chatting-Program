@@ -12,7 +12,8 @@
           <el-table :data="queryResult" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />
             <el-table-column prop="user_id" label="id" />
-            <el-table-column prop="user_name" label="name" />
+            <el-table-column prop="user_type" label="type" />
+            <el-table-column prop="user_status" label="상메" />
             <el-table-column label="friend" align="center">
               <template #default="scope">
                 <el-button
@@ -110,12 +111,38 @@ export default {
     console.log(queryResult2);
     console.log("-----------------------------------------");
     queryResult.forEach(QR => {
-      this.queryResult.push({
-        ...QR
-      });
+      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+        if(QR.user_type==1){
+          QR.user_type="일반"
+        }
+        else if(QR.user_type==2){
+          QR.user_type="학생"
+        }
+        else if(QR.user_type==2){
+          QR.user_type="강사"
+        }
+        else{
+          QR.user_type="기업"
+        }
+        this.queryResult.push({
+          ...QR
+        });
+      }
     });
     queryResult2.forEach(QR => {
       if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+        if(QR.user_type==1){
+          QR.user_type="일반"
+        }
+        else if(QR.user_type==2){
+          QR.user_type="학생"
+        }
+        else if(QR.user_type==2){
+          QR.user_type="강사"
+        }
+        else{
+          QR.user_type="기업"
+        }
         this.queryResult2.push({
           ...QR
         });

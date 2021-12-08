@@ -4,7 +4,7 @@
       <app-header></app-header>
     </el-header>
     <el-main>
-      <router-view />
+      <router-view :key="$route.fullPath"/>
     </el-main>
     <el-footer>
       <app-footer></app-footer>

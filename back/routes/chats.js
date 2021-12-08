@@ -46,7 +46,7 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
 router.post('/', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
   const { name, description } = req.body;
-
+  
   if (id) {
     const result = await query(`SELECT * FROM chatrooms where name = '${name}'`);
     if (result.length > 0) {

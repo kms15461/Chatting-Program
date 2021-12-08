@@ -20,19 +20,18 @@
             <div id='app'>
             <p v-html="aLinkToMedium"></p>
             </div>
-            <input v-on:change="fileSelect()" name='attachment' ref='csvfile' type='file' accept='.csv'>
-            <el-row :data="userinfo" v-if="userinfo.queryResult">//쿼리가 끝나서 결과물이 돌아왔을때 렌더링
+            <el-row :data="userinfo" v-if="userinfo.queryResult">
             <el-col>위도:{{ `${userinfo.queryResult[0].lat} `}} </el-col>
             <el-col>경도:{{ `${userinfo.queryResult[0].lon} `}} </el-col>
             <el-col>건물:{{ `${userinfo.queryResult[0].building} `}} </el-col>
             <el-col>층수:{{ `${userinfo.queryResult[0].floor} `}} </el-col>
             <el-col>SSID:{{ `${userinfo.queryResult[0].SSID} `}} </el-col>
             <el-col>IP:{{ `${userinfo.queryResult[0].IP} `}} </el-col>
-              
             </el-row>
+            <button @click="importTextFile">불러오기</button>
             <el-row>
               <el-col :span="6">
-                <el-button type="primary" @click="UpdatemyPlace()">업데이트 하기</el-button>
+                <el-button type="primary" @click="submit()">업데이트 하기</el-button>
               </el-col>
             </el-row>
             <el-row>
@@ -58,18 +57,19 @@ import { ElNotification } from 'element-plus';
 
 export default {
   name: "EditStatusMsg",
-
   computed: {
     ...mapState('user', ['name', 'id', 'connected']),
   },
   data() {
     return {
+      textData:'',
       csvfile:'',
       userinfo:[],
       form: {
-        csvfile:"", 
+        csvcontents:"", 
         statusmsg: "",
       },
+      
     };
   },
   async created() {
@@ -166,16 +166,28 @@ export default {
     async submit(){
       console.log("============");
       
-      console.log(this.form.csvfile);
-      const { success } = (await http.post("/users/uploadFile", this.form, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          }
-        })).data;
+      console.log(this.form.csvcontents);
+      const { success } = (await http.post("/users/uploadFile", this.form)).data;
       console.log(success);   
-    }
-    
-   
+    },
+    async importTextFile() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'text/plain'; // 확장자가 xxx, yyy 일때, ".xxx, .yyy"
+      // this 접근을 위해 선언 필요
+      const self = this;
+      input.onchange = function () {
+        const file = new FileReader();
+        file.onload = () => {
+          self.$data.textData = file.result;
+          self.$data.form.csvcontents=file.result;
+        };
+        file.readAsText(this.files[0]);
+      };
+      input.click();
+      console.log("~~~~~~~~~~~~~````");
+      console.log(this.form.csvcontents);
+    },
   }
 
 };

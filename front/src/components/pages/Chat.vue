@@ -53,11 +53,12 @@
                       <el-radio-button label="지정시간"></el-radio-button>
                     </el-radio-group>
                   </div>
+                  <el-input-number v-model="num" :step="1" :min="1" />
                 </el-row>
                 <el-row justify="center" align="middle" style="height: 50%;">
                   <el-col
                     :span="12">
-                    <el-button type="info" class="send_button" @click="rendezvoussendMessage">rendezvous send</el-button>
+                    <el-button type="info" class="send_button" @click="[rendezvoussendMessage(), dialogVisible = false]">rendezvous send</el-button>
                   </el-col>
                 </el-row>
               </el-dialog>
@@ -120,27 +121,53 @@ export default defineComponent({
   },
   setup() {
     const dialogVisible = ref(false)
+    const num = ref(1)
 
     return {
       dialogVisible,
       radio: ref('3분'),
+      num,
     }
   },
   methods: {
     rendezvoussendMessage() {
       if (this.chatMessage.trim() !== '') {
         const created_at = Date.now();
+        const expire_time = new Date(created_at);
+        const noticed = 0;
+
+        if (this.radio === '3분'){
+          const durtime = 3;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else if(this.radio === '30분'){
+          const durtime = 30;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else if(this.radio === '60분'){
+          const durtime = 60;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+        else{
+          const durtime = this.num;
+          expire_time.setMinutes(expire_time.getMinutes()+durtime);
+        }
+
         this.chatDatas.push({
-          message: this.chatMessage,
+          message: this.chatMessage + expire_time.toLocaleTimeString() + "에 삭제됩니다.",
           type: 'chat_right',
-          created_at
+          created_at,
+          expire_time,
+          noticed
         });
 
         // socket 채팅 전송
         this.$socket.emit('CHAT_MESSAGE', {
-          message: this.chatMessage,
+          message: this.chatMessage + expire_time.toLocaleTimeString() + "에 삭제됩니다.",
           targetId: this.$route.params.userId,
-          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+          created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
+          expire_time: new Date(expire_time.setHours(expire_time.getHours()+9)).toISOString().slice(0, 19).replace('T', ' '),
+          noticed: noticed
         })
 
         this.chatMessage = '';

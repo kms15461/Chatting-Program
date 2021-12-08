@@ -2,17 +2,30 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
+var fs = require('fs'); // 1
+var multer   = require('multer'); // 1
+var storage  = multer.diskStorage({ // 2
+  destination(req, file, cb) {
+    cb(null, 'uploadedFiles/');
+  },
+  filename(req, file, cb) {
+    cb(null, `${Date.now()}__${file.originalname}`);
+  },
+});
+var upload = multer({ dest: 'uploadedFiles/' }); // 3-1
+var uploadWithOriginalFilename = multer({ storage: storage }); // 3-2
+
 
 
 
 router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
-  const on_friend = await query(`SELECT * from users,friends where user_connected = 1 and user_id=followee and follower = '${id}';`);
+  const on_friend = await query(`SELECT * from users,friends where user_connected = 1 and user_id=followee and follower = '${id}' ORDER BY user_name ASC;`);
   res.json({on_friend})
 });
 router.get('/offlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
-  const off_friend = await query(`SELECT * from users,friends where user_connected = 0 and user_id=followee and follower = '${id}';`);
+  const off_friend = await query(`SELECT * from users,friends where user_connected = 0 and user_id=followee and follower = '${id}' ORDER BY user_name DESC;`);
   res.json({off_friend})
 });
 router.post('/signIn', async (req, res, next) => {
@@ -21,6 +34,7 @@ router.post('/signIn', async (req, res, next) => {
   const queryResult = await query(`SELECT * from users where user_id = '${id}' and user_pw = '${password}';`);
   console.log(queryResult);
   if (queryResult.length > 0) {
+    await query(`UPDATE users SET user_connected = 1 WHERE user_id = '${id}';`);
     const jwt = sign({
       id,
       name: queryResult[0].user_name,
@@ -94,7 +108,7 @@ router.post('/addFriends', verifyMiddleWare, async (req, res, next) => {
           errorMessage: 'already exists!'
         }); 
       } else {
-        await query(`INSERT INTO friends(from_id, to_id) (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.id = '${id}' and u2.id = '${friend_id}');`);
+        await query(`INSERT INTO friends(follower, followee) (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
 
         res.json({
           success: true,
@@ -131,7 +145,7 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
           errorMessage: 'Not exists id!'
         });
       } else {
-        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.used_id = '${friend_id}');`);
+        await query(`DELETE FROM friends where (follower, followee) in (SELECT u1.user_id, u2.user_id from users u1, users u2 WHERE u1.user_id = '${id}' and u2.user_id = '${friend_id}');`);
 
         res.json({
           success: true,
@@ -153,6 +167,7 @@ router.post('/removeFriends', verifyMiddleWare, async (req, res, next) => {
 
 router.get('/signOut', verifyMiddleWare, (req, res, next) => {
   const { id } = req.decoded;
+  query(`UPDATE users SET user_connected = 0 WHERE user_id = '${id}'`);
 
   if (id) {
     res.clearCookie('token').json({
@@ -256,6 +271,8 @@ router.get('/SetProfile', verifyMiddleWare, async (req, res, next) => {
 });
 
 router.post('/EditStatusMsg', verifyMiddleWare, async (req, res, next) => {
+  console.log(req.body);
+
   const { id } = req.decoded;
   const { statusmsg } = req.body;
   await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
@@ -273,12 +290,13 @@ router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
   res.json({
     success: true
   });
-
-
 });
+
+
 
 router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
+
 
   var data = require("fs").readFileSync("./routes/test.csv", "utf8")
   data = data.split("\r\n")
@@ -303,6 +321,28 @@ router.get('/place', verifyMiddleWare, async(req, res, next) => {
   const queryResult = await query(`SELECT distinct building, floor, SSID from users order by building asc, floor asc, SSID asc;`);
   res.json({queryResult})
 });
+
+router.post('/uploadFile', upload.single('attachment'), function(req,res){ // 4 
+  console.log(req.file);
+  res.render('confirmation', { file:req.file, files:null });
+});
+
+router.post('/uploadFileWithOriginalFilename', uploadWithOriginalFilename.single('attachment'), function(req,res){ // 5
+  res.render('confirmation', { file:req.file, files:null });
+});
+
+router.post('/upload', async (req, res, next) => {
+  console.log("==============");
+  console.log(req.body);
+  var dir = './uploadedFiles';
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir); // 2
+  
+  
+  res.json({
+    success : true,
+  });
+
+}); 
 
 module.exports = router;
 

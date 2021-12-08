@@ -2,7 +2,14 @@
   <div class="friend">
     <el-row justify="center" align="middle" style="height: 100%">
       <el-col :span="8" style="height: 100%">
-        <el-card style="height: 100%" body-style="height: 100%;">
+        <el-card style="height: 100%" body-style="height: 100%;">          
+          <h3 style="text-align: center">Friend List</h3>
+          <el-row>            
+            <el-col :span="20"> </el-col>
+            <el-col :span="4">
+              <el-button type="primary">검색</el-button>
+            </el-col>
+          </el-row>
           <h3 style="text-align: center">Online Friend</h3>
           <el-table :data="on_friend" style="width: 100%" max-Height="700px">
             <el-table-column type="index" width="50" />

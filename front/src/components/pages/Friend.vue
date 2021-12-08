@@ -17,8 +17,8 @@
             <el-table-column prop="user_name" label="name" />
             <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
-                    <span v-if="scope.row.user_connected === 1" class="online"> Online! </span>
-                    <span v-else class="offline"> Offline? </span>
+                    <span v-if="scope.row.user_connected === 1" class="online"> Online </span>
+                    <span v-else class="offline"> Offline </span>
                 </template>
             </el-table-column>
             <el-table-column label="friend" align="center">
@@ -59,8 +59,8 @@
             <el-table-column prop="user_name" label="name" />
             <el-table-column prop="user_connected" label="online" align="center">
                 <template #default="scope">
-                    <span v-if="scope.row.user_connected === 1" class="online"> Online! </span>
-                    <span v-else class="offline"> Offline? </span>
+                    <span v-if="scope.row.user_connected === 1" class="online"> Online </span>
+                    <span v-else class="offline"> Offline </span>
                 </template>
             </el-table-column>
             <el-table-column label="friend" align="center">

@@ -11,12 +11,11 @@ router.get('/list', verifyMiddleWare, async (req, res, next) => {
     const chatList = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
       WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
       SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=1 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
-    console.log(chatList);
     const chatList2 = (await query(`SELECT @uid:=user_id from users where user_id = '${id}';
-    WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
-    SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=0 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
-    console.log(chatList2);
+      WITH b AS (SELECT if(senderid = @uid, receiverid, senderid) AS id, content, sendtime FROM message WHERE senderid = @uid OR receiverid = @uid)
+      SELECT u.user_id, u.user_name, b.content, b.sendtime ,u.user_connected FROM b, users u WHERE u.user_connected=0 and sendtime IN (SELECT max(sendtime) FROM b GROUP BY id) and (u.user_id = b.id);`))[1];
     chatList.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); })
+    chatList2.forEach(function(chatlist) { chatlist.content=cryptr.cryption.decrypt(chatlist.content); })
     res.json({
       success: true,
       chatList,
@@ -51,7 +50,6 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
       return degrees * Math.PI / 180;
     };
     const distance=(6371*Math.acos(Math.cos(Math.radians(senderlat))*Math.cos(Math.radians(receiverlat))*Math.cos(Math.radians(receiverlon) -Math.radians(senderlon))+Math.sin(Math.radians(senderlat))*Math.sin(Math.radians(receiverlat))));
-    console.log('거리:', distance);
     const far =  distance> 0.5;
     res.json({
       success: true,

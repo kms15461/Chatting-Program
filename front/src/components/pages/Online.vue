@@ -101,13 +101,18 @@ export default {
     console.log(para[6]);
     console.log("--------------------------");
     console.log("ENTER ONLINE VUE");
+    const { newpara } = (
+      await http.post("/users/encoding", { para })
+    ).data;
+    console.log("===newpara===");
+    console.log(newpara);
     const { queryResult } = (await http.get('/users/onlineuser')).data;
     const { queryResult2 } = (await http.get('/users/onlineuser2')).data;
     console.log(queryResult);
     console.log(queryResult2);
     console.log("-----------------------------------------");
     queryResult.forEach(QR => {
-      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+      if(QR.building==newpara && QR.floor==para[5] && QR.SSID==para[6]){
         if(QR.user_type==1){
           QR.user_type="일반"
         }
@@ -126,7 +131,7 @@ export default {
       }
     });
     queryResult2.forEach(QR => {
-      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+      if(QR.building==newpara && QR.floor==para[5] && QR.SSID==para[6]){
         if(QR.user_type==1){
           QR.user_type="일반"
         }

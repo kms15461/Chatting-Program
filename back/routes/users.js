@@ -219,6 +219,7 @@ router.post('/signUp', async (req, res, next) => {
 router.get('/onlineuser', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   const queryResult = await query(`SELECT * from users where user_connected = 1 and user_id <> '${id}'`);
+  console.log(queryResult[4]);
   res.json({queryResult})
 });
 
@@ -325,6 +326,18 @@ router.post('/searchfriend', verifyMiddleWare, async (req, res, next) => {
     newstring: newstring
   });
 }); 
+
+
+router.post('/encoding', verifyMiddleWare, async (req, res, next) => {
+  console.log("========encoding======");
+  const { para }=req.body;
+  console.log(para[4]);
+  const newpara=decodeURI(para[4]);
+  res.json({
+    newpara: newpara
+  });
+}); 
+
 
 router.get('/nearme1', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;

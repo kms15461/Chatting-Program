@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
+var fs = require('fs'); // 1
+var multer   = require('multer'); // 1
+var storage  = multer.diskStorage({ // 2
+  destination(req, file, cb) {
+    cb(null, 'uploadedFiles/');
+  },
+  filename(req, file, cb) {
+    cb(null, `${Date.now()}__${file.originalname}`);
+  },
+});
+var upload = multer({ dest: 'uploadedFiles/' }); // 3-1
+var uploadWithOriginalFilename = multer({ storage: storage }); // 3-2
+
 
 router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
@@ -254,6 +267,8 @@ router.get('/SetProfile', verifyMiddleWare, async (req, res, next) => {
 });
 
 router.post('/EditStatusMsg', verifyMiddleWare, async (req, res, next) => {
+  console.log(req.body);
+
   const { id } = req.decoded;
   const { statusmsg } = req.body;
   await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
@@ -271,12 +286,13 @@ router.get('/withdrawal', verifyMiddleWare, async (req, res, next) => {
   res.json({
     success: true
   });
-
-
 });
+
+
 
 router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
+
 
   var data = require("fs").readFileSync("./routes/test.csv", "utf8")
   data = data.split("\r\n")
@@ -295,6 +311,28 @@ router.get('/UpdatemyPlace', verifyMiddleWare, async(req, res, next) => {
   });
   
 });
+
+router.post('/uploadFile', upload.single('attachment'), function(req,res){ // 4 
+  console.log(req.file);
+  res.render('confirmation', { file:req.file, files:null });
+});
+
+router.post('/uploadFileWithOriginalFilename', uploadWithOriginalFilename.single('attachment'), function(req,res){ // 5
+  res.render('confirmation', { file:req.file, files:null });
+});
+
+router.post('/upload', async (req, res, next) => {
+  console.log("==============");
+  console.log(req.body);
+  var dir = './uploadedFiles';
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir); // 2
+  
+  
+  res.json({
+    success : true,
+  });
+
+}); 
 
 module.exports = router;
 

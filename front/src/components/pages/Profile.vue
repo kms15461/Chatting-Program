@@ -17,6 +17,10 @@
                 <el-button type="primary" @click="EditStatusMsg()">변경하기</el-button>
               </el-col>
             </el-row>
+            <div id='app'>
+            <p v-html="aLinkToMedium"></p>
+            </div>
+            <input v-on:change="fileSelect()" name='attachment' ref='csvfile' type='file' accept='.csv'>
             <el-row :data="userinfo" v-if="userinfo.queryResult">//쿼리가 끝나서 결과물이 돌아왔을때 렌더링
             <el-col>위도:{{ `${userinfo.queryResult[0].lat} `}} </el-col>
             <el-col>경도:{{ `${userinfo.queryResult[0].lon} `}} </el-col>
@@ -60,17 +64,16 @@ export default {
   },
   data() {
     return {
+      csvfile:'',
       userinfo:[],
       form: {
+        csvfile:"", 
         statusmsg: "",
       },
     };
   },
   async created() {
-    console.log("enter created");
     const queryResult=(await http.get('/users/SetProfile')).data;
-
-    console.log(queryResult);
     this.userinfo=queryResult;
   },
   methods: {
@@ -154,7 +157,24 @@ export default {
       this.$router.push({
 					name: 'Profile'
 				});
+    },
+    fileSelect(){
+      console.log("------------");
+      this.form.csvfile=this.$refs.csvfile.files[0];
+      console.log(this.form.csvfile);
+    },
+    async submit(){
+      console.log("============");
+      
+      console.log(this.form.csvfile);
+      const { success } = (await http.post("/users/uploadFile", this.form, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          }
+        })).data;
+      console.log(success);   
     }
+    
    
   }
 

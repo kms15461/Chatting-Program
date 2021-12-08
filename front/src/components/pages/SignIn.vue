@@ -12,7 +12,7 @@
               <el-input v-model="form.id"></el-input>
             </el-form-item>
             <el-form-item label="PASSWORD">
-              <el-input v-model="form.password"></el-input>
+              <el-input v-model="form.password" show-password></el-input>
             </el-form-item>
             <el-row>
               <el-col :span="18"> </el-col>

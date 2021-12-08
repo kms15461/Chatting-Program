@@ -13,10 +13,10 @@
               <el-button type="primary" @click="idDuplicateCheck()" >중복확인</el-button>
             </el-form-item>
             <el-form-item label="PASSWORD" prop="password">
-              <el-input v-model="ruleForm.password"></el-input>
+              <el-input v-model="ruleForm.password" show-password></el-input>
             </el-form-item>
             <el-form-item label="PASSWORD CHECK" prop="password_check">
-              <el-input v-model="ruleForm.password_check"></el-input>
+              <el-input v-model="ruleForm.password_check" show-password></el-input>
             </el-form-item>
             <el-form-item label="NAME" prop="name">
               <el-input v-model="ruleForm.name"></el-input>

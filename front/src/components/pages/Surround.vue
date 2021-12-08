@@ -21,7 +21,7 @@
           </el-table>
           <h3 style="text-align: center"></h3>
           <el-row>            
-            <el-col :span="10"> </el-col>
+            <el-col :span="9"> </el-col>
             <el-col :span="4">
               <el-button
                   type="primary"
@@ -33,14 +33,7 @@
           <h3 style="text-align: center"></h3>
           <el-row align="center"> 
             <el-col align="center">
-            <button @click="importTextFile">불러오기</button>
-            </el-col>
-          </el-row>
-          <el-row>            
-            
-            <el-col align="center">
-              <br>
-              <el-button type="primary" @click="submit(), this.$router.go()"  :model="form"  >위치 추가하기</el-button>
+            <button @click="importTextFile">위치 추가하기</button>
             </el-col>
           </el-row>
         </el-card>

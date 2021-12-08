@@ -262,10 +262,19 @@ router.post('/EditStatusMsg', verifyMiddleWare, async (req, res, next) => {
   const { id } = req.decoded;
   const { statusmsg } = req.body;
   await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
-  res.json({
-    success: true
-  });
-
+  const name_regex = /^[가-힣a-zA-z]{1,20}$/;
+  if (!name_regex.test(statusmsg)) {
+    res.json({
+      success: false,
+      errorMessage: '상태메세지는 20자 이하여야합니다'
+    });
+  }
+  else{
+    await query(`UPDATE users SET user_status='${statusmsg}' where user_id='${id}'`);
+    res.json({
+      success: true
+    });
+  }
 });
 
 

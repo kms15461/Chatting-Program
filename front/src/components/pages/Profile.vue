@@ -61,8 +61,19 @@ export default {
     ...mapState('user', ['name', 'id', 'connected']),
   },
   data() {
+    const status_Validator = (rule, value, callback) => {
+      const regex = /^[가-힣a-zA-z]{1,20}$/; 
+      if (!regex.test(value)) {
+        callback(new Error("20자 이하의 상태메세지를 작성해주세요~!"));
+      } else {
+        callback();
+      }
+    };
     return {
       userinfo:[],
+      rules: {
+        statusmsg: [{ validator: status_Validator, trigger: "blur" }],
+      },
       form: {
         csvcontents:"", 
         statusmsg: "",
@@ -76,17 +87,32 @@ export default {
   methods: {
     ...mapMutations("user", ["updateUser"]),
 
-    async EditStatusMsg() {
-      const { success } = (
-        await http.post("/users/EditStatusMsg", this.form)
-      ).data;
-      if (success){
-        ElNotification({
-          title: "회원정보수정",
-          message: "회원정보수정 완료",
-          type: "success",
-        });
-      }
+    EditStatusMsg() {
+      this.$refs["form"].validate(async (valid) => {
+        if (valid) {
+          const { success, errorMessage } = (
+          await http.post("/users/EditStatusMsg", this.form)
+          ).data;
+          if (success) {
+            ElNotification({
+              title: "회원정보수정",
+              message: "회원정보수정 완료",
+              type: "success",
+            });
+          } else {
+            ElNotification({
+              title: "회원정보수정실패",
+              message: errorMessage,
+              type: "error",
+            });
+          }
+        } else {
+          return false;
+        }
+      });
+
+      
+      
     },
 		async signOut() {
 			const { success, errorMessage } = (await http.get('/users/signOut')).data;
@@ -165,5 +191,3 @@ export default {
 
 };
 </script>
-
-

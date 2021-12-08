@@ -94,6 +94,14 @@ import http from '../../services/http';
 export default {
   name: "Chat",
   async created() {
+    var link = document.location.href;
+    var para = document.location.href.split("/");
+    console.log("--------------------------");
+    console.log(link);
+    console.log(para[4]);
+    console.log(para[5]);
+    console.log(para[6]);
+    console.log("--------------------------");
     console.log("ENTER ONLINE VUE");
     const { queryResult } = (await http.get('/users/onlineuser')).data;
     const { queryResult2 } = (await http.get('/users/onlineuser2')).data;
@@ -101,14 +109,18 @@ export default {
     console.log(queryResult2);
     console.log("-----------------------------------------");
     queryResult.forEach(QR => {
-      this.queryResult.push({
-        ...QR
-      });
+      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+        this.queryResult.push({
+          ...QR
+        });
+      }
     });
     queryResult2.forEach(QR => {
-      this.queryResult2.push({
-        ...QR
-      });
+      if(QR.building==para[4] && QR.floor==para[5] && QR.SSID==para[6]){
+        this.queryResult2.push({
+          ...QR
+        });
+      }
     });
   },
   computed: {

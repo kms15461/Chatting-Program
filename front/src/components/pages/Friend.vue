@@ -4,7 +4,7 @@
       <el-col :span="15" style="height: 200%">
         <el-card style="height: 100%" body-style="height: 100%;">          
           <el-row>            
-            <el-col :data="me" :span="20"> <h2 style="text-align: center">친구 목록</h2><h4 style="text-align: right">(현 위치:{{this.me[0].building}})</h4></el-col>
+            <el-col v-if="this.me[0]" :span="20"> <h2 style="text-align: center">친구 목록</h2><h4 style="text-align: right">(현 위치:{{this.me[0].building}})</h4></el-col>
             <el-col :span="4">
               <el-button type="primary"
               @click="$router.push({ name: 'FindFriend' })"

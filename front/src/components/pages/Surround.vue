@@ -5,7 +5,7 @@
         <el-card style="height: 100%" body-style="height: 100%;">
           <h3 style="text-align: center">접속중인 사용자</h3>
           <el-table :data="queryResult" style="width: 100%" max-Height="700px">
-            <el-table-column prop="building" label="건물(영어로)" />
+            <el-table-column prop="building" label="건물" />
             <el-table-column prop="floor" label="층" />
             <el-table-column prop="SSID" label="wifi ssid" />
             <el-table-column label="online" align="center">

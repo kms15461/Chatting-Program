@@ -2,11 +2,11 @@
 
 const mysql = require('mysql');
 const connection = mysql.createPool({
-    host: 'localhost',
+    host: '165.132.105.26',
     port    : '3306',
-    user: 'root',
-    password: 'root', // 이전에 입력했던 비밀번호
-    database: 'test', // 이전에 입력했던 데이터베이스 명
+    user: 'team01',
+    password: 'database01', // 이전에 입력했던 비밀번호
+    database: 'database01', // 이전에 입력했던 데이터베이스 명
     multipleStatements: true,
     connectionLimit: 1000,
 });

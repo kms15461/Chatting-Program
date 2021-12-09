@@ -36,7 +36,7 @@ socket.on('listening', () => onListening(socket));
 
 socketRouter(require("socket.io")(socket, {
 	cors: {
-		origin: "http://localhost:8080",
+		origin: "http://165.132.105.26:8100",
 		methods: ["GET", "POST"],
 		transports: ['websocket', 'polling'],
 		credentials: true

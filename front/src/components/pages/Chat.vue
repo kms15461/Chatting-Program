@@ -8,9 +8,10 @@
         <el-card style="height: 100%;" :body-style="{ height: 'calc(100% - 58px)' }">
           <template #header >
             <div class="card-header">
-              <span>{{ this.target_name }}</span>
+              <span>{{ $route.params.userId }}</span>
 
               <el-button
+                
                 v-if="!this.friends.find(el => el.user_id === $route.params.userId)"
                 size="mini"
                 @click="addFriend($route.params.userId), this.$router.go()"

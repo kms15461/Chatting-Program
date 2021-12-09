@@ -42,9 +42,9 @@
     },
     "rules": {}
   },
-  "proxy": "http://165.132.105.26:8101",
-  "socketUrl": "http://165.132.105.26:8102",
-  "apiUrl": "http://165.132.105.26:8101",
+  "proxy": "http://localhost:3000",
+  "socketUrl": "http://localhost:4000",
+  "apiUrl": "http://localhost:3000",
   "browserslist": [
     "> 1%",
     "last 2 versions",

@@ -13,7 +13,7 @@ const socketRouter = require('../routes/socket.js');
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '8101');
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -30,13 +30,13 @@ const socket = http.createServer(app_socket);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', () => onListening(server));
-socket.listen(8102);
+socket.listen(4000);
 socket.on('error', onError);
 socket.on('listening', () => onListening(socket));
 
 socketRouter(require("socket.io")(socket, {
 	cors: {
-		origin: "http://165.132.105.26:8100",
+		origin: "http://localhost:8080",
 		methods: ["GET", "POST"],
 		transports: ['websocket', 'polling'],
 		credentials: true

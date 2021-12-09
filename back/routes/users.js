@@ -4,16 +4,15 @@ const { query } = require('../modules/db');
 const { sign, verifyMiddleWare } = require('../modules/jwt');
 const bcrypt = require('bcryptjs');
 
-router.get('/onlinefriend', verifyMiddleWare, async(req, res, next) => {
+router.get('/getfriend', verifyMiddleWare, async(req, res, next) => {
   const { id } = req.decoded;
   const on_friend = await query(`SELECT * from users,friends where user_connected = 1 and user_id=followee and follower = '${id}' ORDER BY user_name ASC;`);
-  res.json({on_friend})
-});
-router.get('/offlinefriend', verifyMiddleWare, async(req, res, next) => {
-  const { id } = req.decoded;
   const off_friend = await query(`SELECT * from users,friends where user_connected = 0 and user_id=followee and follower = '${id}' ORDER BY user_name DESC;`);
-  res.json({off_friend})
+  const me = await query(`SELECT * from users where user_id = '${id}';`);
+  
+  res.json({on_friend, off_friend, me});
 });
+
 router.post('/signIn', async (req, res, next) => {
   console.log("------------ENTER signin-----------------");
   const { id, password } = req.body;

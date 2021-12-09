@@ -8,8 +8,8 @@
         <el-card style="height: 100%;" :body-style="{ height: 'calc(100% - 58px)' }">
           <template #header >
             <div class="card-header">
-              <span>{{ $route.params.userId }}</span>
-              <br>
+              <span>{{ this.target_name }}</span>
+
               <el-button
                 v-if="!this.friends.find(el => el.user_id === $route.params.userId)"
                 size="mini"
@@ -107,6 +107,7 @@ export default defineComponent({
   name: "Chat",
   data() {
     return {
+      target_name:'',
       far: '',
       chatDatas: [],
       chatMessage: '',
@@ -117,7 +118,7 @@ export default defineComponent({
   },
   async created() {
     // 이전 대화 내용 가져오기
-    const { success1, far, chatDatas, errorMessage1 } = (await http.get(`/chats/chatData/${this.$route.params.userId}`)).data;
+    const { success1, far, chatDatas, target_name, errorMessage1 } = (await http.get(`/chats/chatData/${this.$route.params.userId}`)).data;
     if (success1) {
       chatDatas.forEach(chatData => {
         this.chatDatas.push({
@@ -128,6 +129,7 @@ export default defineComponent({
 
         this.chatDatas.sort((a, b) => a.created_at - b.created_at);
         this.far=far;
+        this.target_name=target_name;
         
       });
     } else {

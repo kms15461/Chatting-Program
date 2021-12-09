@@ -39,11 +39,11 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
       FROM message, (SELECT f.user_id as f_i, t.user_id as t_i FROM users f, users t WHERE (f.user_id = '${id}' and t.user_id = '${targetId}') OR (t.user_id = '${id}' and f.user_id = '${targetId}')) a 
       WHERE (senderid = a.f_i and receiverid = a.t_i) ORDER BY sendtime ASC;`);
 
-    chatDatas.forEach(function(chatlist) { chatlist.message=cryptr.cryption.decrypt(chatlist.message); })
-    const senderloc=await query(`select lat, lon from users where user_id='${id}'`)
+    chatDatas.forEach(function(chatlist) { chatlist.message=cryptr.cryption.decrypt(chatlist.message); });
+    const senderloc=await query(`select lat, lon from users where user_id='${id}'`);
     const senderlat=Number(senderloc[0].lat);
     const senderlon=Number(senderloc[0].lon);
-    const receiverloc=await query(`select lat, lon from users where user_id='${targetId}'`)
+    const receiverloc=await query(`select lat, lon from users where user_id='${targetId}';`);
     const receiverlat=Number(receiverloc[0].lat);
     const receiverlon=Number(receiverloc[0].lon);
     Math.radians = function(degrees) {
@@ -51,10 +51,15 @@ router.get('/chatData/:targetId', verifyMiddleWare, async (req, res, next) => {
     };
     const distance=(6371*Math.acos(Math.cos(Math.radians(senderlat))*Math.cos(Math.radians(receiverlat))*Math.cos(Math.radians(receiverlon) -Math.radians(senderlon))+Math.sin(Math.radians(senderlat))*Math.sin(Math.radians(receiverlat))));
     const far =  distance> 0.5;
+
+    const targetname=await query(`select user_name from users where user_id='${targetId}';`);
+    const target_name=targetname[0].user_name;
+
     res.json({
       success1: true,
       far: far,
-      chatDatas
+      chatDatas,
+      target_name
     });
   } else {
     res.json({

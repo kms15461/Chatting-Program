@@ -4,7 +4,7 @@
       <el-col :span="15" style="height: 200%">
         <el-card style="height: 100%" body-style="height: 100%;">          
           <el-row>            
-            <el-col :span="20"> </el-col>
+            <el-col :data="me" :span="20"> <h2 style="text-align: center">친구 목록</h2><h4 style="text-align: right">(현 위치:{{this.me[0].building}})</h4></el-col>
             <el-col :span="4">
               <el-button type="primary"
               @click="$router.push({ name: 'FindFriend' })"
@@ -17,13 +17,6 @@
             <el-table-column prop="user_name" label="이름" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
-            <el-table-column prop="user_connected" label="online" align="center">
-                <template #default="scope">
-                    <span v-if="scope.row.user_connected === 1" class="online"> Online </span>
-                    <span v-else class="offline"> Offline </span>
-                </template>
-            </el-table-column>
-
             <el-table-column label="profile" align="center">
               <template #default="scope">
                 <el-button

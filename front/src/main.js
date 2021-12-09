@@ -10,7 +10,7 @@ import config from '../package.json';
 
 createApp(App).use(new VueSocketIO({
 	debug: true,
-	connection: config.socketUrl,
+	connection: `${window.location.protocal}//${window.location.hostname}:${config.socketPort}`,
 	options: {
 		autoConnect: false,
 	},

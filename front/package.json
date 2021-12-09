@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "npm run serve",
-    "serve": "vue-cli-service serve --port 8100",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -42,9 +42,8 @@
     },
     "rules": {}
   },
-  "proxy": "http://165.132.105.26:3000",
-  "socketUrl": "http://165.132.105.26:4000",
-  "apiUrl": "http://165.132.105.26:3000",
+  "apiPort": "15000",
+  "socketPort": "15001",
   "browserslist": [
     "> 1%",
     "last 2 versions",

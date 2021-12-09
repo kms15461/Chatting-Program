@@ -205,7 +205,7 @@ router.post('/signUp', async (req, res, next) => {
         usertypenum = 4;
       }
       password=bcrypt.hashSync(password);
-      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type) VALUES('${id}', '${password}', '${name}', 0, '${usertypenum}')`);
+      await query(`INSERT INTO users(user_id, user_pw, user_name, user_connected, user_type, building) VALUES('${id}', '${password}', '${name}', 0, '${usertypenum}', '공학관')`);
 
       res.json({
         success: true,

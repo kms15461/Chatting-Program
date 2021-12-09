@@ -13,7 +13,7 @@ app.set('view engine', 'pug');
 app.use(cors({
   credentials: true,
   origin: function(origin, callback) {
-    if (['http://165.132.105.26:8100'].indexOf(origin) !== -1) {
+    if (['http://localhost:8080'].indexOf(origin) !== -1) {
       callback(null, true)
     } else {
       callback(new Error('Not allowed by CORS'))

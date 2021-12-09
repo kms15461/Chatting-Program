@@ -41,12 +41,7 @@
             <el-table-column prop="user_name" label="이름" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
-            <el-table-column prop="user_connected" label="online" align="center">
-                <template #default="scope">
-                    <span v-if="scope.row.user_connected === 1" class="online"> Online </span>
-                    <span v-else class="offline"> Offline </span>
-                </template>
-            </el-table-column>
+
             <el-table-column label="friend" align="center">
               <template #default="scope">
                 <el-button
@@ -84,12 +79,6 @@
             <el-table-column prop="user_name" label="이름" />
             <el-table-column prop="user_type" label="유저 타입" />
             <el-table-column prop="user_status" label="상태 메세지" />
-            <el-table-column prop="user_connected" label="online" align="center">
-                <template #default="scope">
-                    <span v-if="scope.row.user_connected === 1" class="online"> Online </span>
-                    <span v-else class="offline"> Offline </span>
-                </template>
-            </el-table-column>
             <el-table-column label="friend" align="center">
               <template #default="scope">
                 <el-button
